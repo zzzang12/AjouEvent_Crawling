@@ -27,8 +27,8 @@ type Notice struct {
 const maxNumCount int = 10
 
 var client *firestore.Client
-var ajouNormalBoxCount int64
-var ajouNormalMaxNum int64
+var ajouNormalBoxCount int
+var ajouNormalMaxNum int
 
 func main() {
 	ctx := context.Background()
@@ -48,8 +48,8 @@ func main() {
 		log.Fatal(err)
 	}
 	ajouNormal := dsnap.Data()
-	ajouNormalBoxCount = ajouNormal["box"].(int64)
-	ajouNormalMaxNum = ajouNormal["num"].(int64)
+	ajouNormalBoxCount = int(ajouNormal["box"].(int64))
+	ajouNormalMaxNum = int(ajouNormal["num"].(int64))
 
 	ajouNormalFunc(ajouNormalBoxCount, ajouNormalMaxNum)
 }
@@ -61,9 +61,8 @@ func min(x, y int) int {
 	return y
 }
 
-func ajouNormalFunc(dbBoxCount, dbMaxNum int64) {
+func ajouNormalFunc(dbBoxCount, dbMaxNum int) {
 	notices := scrapeAjouNormal(dbBoxCount, dbMaxNum)
-	//notices = notices[:0]
 	for _, notice := range notices {
 		sendAjouNormalToSlack(notice)
 	}
@@ -94,7 +93,7 @@ func sendAjouNormalToSlack(notice Notice) {
 	}
 }
 
-func scrapeAjouNormal(dbBoxCount, dbMaxNum int64) []Notice {
+func scrapeAjouNormal(dbBoxCount, dbMaxNum int) []Notice {
 	noticeURL := "https://ajou.ac.kr/kr/ajou/notice.do"
 
 	resp, err := http.Get(noticeURL)
@@ -130,13 +129,13 @@ func scrapeAjouNormal(dbBoxCount, dbMaxNum int64) []Notice {
 	return notices
 }
 
-func scrapeAjouNormalBoxNotice(doc *goquery.Document, dbBoxCount int64, noticeURL string) []Notice {
+func scrapeAjouNormalBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []Notice {
 	boxNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
-	boxCount := int64(boxNoticeSels.Length())
+	boxCount := boxNoticeSels.Length()
 
 	boxNoticeChan := make(chan Notice, boxCount)
 	boxNotices := make([]Notice, 0, boxCount)
-	boxNoticeCount := int(boxCount - dbBoxCount)
+	boxNoticeCount := boxCount - dbBoxCount
 
 	if boxCount > dbBoxCount {
 		boxNoticeSels = boxNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
@@ -177,18 +176,18 @@ func scrapeAjouNormalBoxNotice(doc *goquery.Document, dbBoxCount int64, noticeUR
 	return boxNotices
 }
 
-func scrapeAjouNormalNumNotice(doc *goquery.Document, dbMaxNum int64, noticeURL string) []Notice {
+func scrapeAjouNormalNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []Notice {
 	numNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
 	maxNumText := numNoticeSels.First().Find("td:nth-child(1)").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
-	maxNum, err := strconv.ParseInt(maxNumText, 10, 64)
+	maxNum, err := strconv.Atoi(maxNumText)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	numNoticeChan := make(chan Notice, maxNumCount)
 	numNotices := make([]Notice, 0, maxNumCount)
-	numNoticeCount := int(maxNum - dbMaxNum)
+	numNoticeCount := maxNum - dbMaxNum
 	numNoticeCount = min(numNoticeCount, maxNumCount)
 
 	if maxNum > dbMaxNum {
