@@ -85,7 +85,7 @@ func sendAjouNormalToSlack(notice Notice) {
 		Title:      strings.Join([]string{notice.date, notice.title}, " "),
 		Text:       notice.link,
 		Footer:     footer,
-		FooterIcon: "./footer_icon.png",
+		FooterIcon: "https://github.com/zzzang12/Notifier/assets/70265177/48fd0fd7-80e2-4309-93da-8a6bc957aacf",
 	}
 
 	_, _, err := api.PostMessage("아주대학교-공지사항", slack.MsgOptionAttachments(attachment))
