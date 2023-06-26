@@ -23,9 +23,6 @@ type AjouNormalNotice struct {
 	Link       string
 }
 
-const maxNumCount int = 10
-
-var Client *firestore.Client
 var AjouNormalBoxCount int
 var AjouNormalMaxNum int
 
@@ -162,10 +159,10 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []Aj
 		log.Fatal(err)
 	}
 
-	numNoticeChan := make(chan AjouNormalNotice, maxNumCount)
-	numNotices := make([]AjouNormalNotice, 0, maxNumCount)
+	numNoticeChan := make(chan AjouNormalNotice, MaxNumCount)
+	numNotices := make([]AjouNormalNotice, 0, MaxNumCount)
 	numNoticeCount := maxNum - dbMaxNum
-	numNoticeCount = utils.Min(numNoticeCount, maxNumCount)
+	numNoticeCount = utils.Min(numNoticeCount, MaxNumCount)
 
 	if maxNum > dbMaxNum {
 		numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
