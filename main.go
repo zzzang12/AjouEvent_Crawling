@@ -2,6 +2,7 @@ package main
 
 import (
 	"Notifier/internal/notifier"
+	"Notifier/internal/utils"
 	"context"
 	firebase "firebase.google.com/go"
 	"fmt"
@@ -19,11 +20,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	notifier.Client, err = app.Firestore(ctx)
+	utils.Client, err = app.Firestore(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer notifier.Client.Close()
+	defer utils.Client.Close()
 
 	notifier.AjouNormalBoxCount, notifier.AjouNormalMaxNum = notifier.GetAjouNormalFromDB()
 

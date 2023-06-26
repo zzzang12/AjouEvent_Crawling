@@ -27,7 +27,7 @@ var AjouNormalBoxCount int
 var AjouNormalMaxNum int
 
 func GetAjouNormalFromDB() (int, int) {
-	dsnap, err := Client.Collection("notice").Doc("ajouNormal").Get(context.Background())
+	dsnap, err := utils.Client.Collection("notice").Doc("ajouNormal").Get(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -125,7 +125,7 @@ func scrapeBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []
 		}
 
 		AjouNormalBoxCount = boxCount
-		_, err := Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		_, err := utils.Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
 				Value: boxCount,
@@ -136,7 +136,7 @@ func scrapeBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []
 		}
 	} else if boxCount < dbBoxCount {
 		AjouNormalBoxCount = boxCount
-		_, err := Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		_, err := utils.Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
 				Value: boxCount,
@@ -159,10 +159,10 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []Aj
 		log.Fatal(err)
 	}
 
-	numNoticeChan := make(chan AjouNormalNotice, MaxNumCount)
-	numNotices := make([]AjouNormalNotice, 0, MaxNumCount)
+	numNoticeChan := make(chan AjouNormalNotice, utils.MaxNumCount)
+	numNotices := make([]AjouNormalNotice, 0, utils.MaxNumCount)
 	numNoticeCount := maxNum - dbMaxNum
-	numNoticeCount = utils.Min(numNoticeCount, MaxNumCount)
+	numNoticeCount = utils.Min(numNoticeCount, utils.MaxNumCount)
 
 	if maxNum > dbMaxNum {
 		numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
@@ -178,7 +178,7 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []Aj
 		}
 
 		AjouNormalMaxNum = maxNum
-		_, err = Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		_, err = utils.Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
 			{
 				Path:  "num",
 				Value: maxNum,
