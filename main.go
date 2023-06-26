@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Notifier/internal/utils"
 	"cloud.google.com/go/firestore"
 	"context"
 	firebase "firebase.google.com/go"
@@ -13,6 +14,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Notice struct {
@@ -31,6 +33,8 @@ var ajouNormalBoxCount int
 var ajouNormalMaxNum int
 
 func main() {
+	start := time.Now()
+
 	ctx := context.Background()
 	sa := option.WithCredentialsFile("./serviceAccountKey.json")
 	app, err := firebase.NewApp(ctx, nil, sa)
@@ -43,22 +47,21 @@ func main() {
 	}
 	defer client.Close()
 
+	ajouNormalBoxCount, ajouNormalMaxNum = getAjouNormalFromDB()
+
+	ajouNormalFunc(ajouNormalBoxCount, ajouNormalMaxNum)
+
+	end := time.Since(start)
+	fmt.Println("end =>", end)
+}
+
+func getAjouNormalFromDB() (int, int) {
 	dsnap, err := client.Collection("notice").Doc("ajouNormal").Get(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
 	ajouNormal := dsnap.Data()
-	ajouNormalBoxCount = int(ajouNormal["box"].(int64))
-	ajouNormalMaxNum = int(ajouNormal["num"].(int64))
-
-	ajouNormalFunc(ajouNormalBoxCount, ajouNormalMaxNum)
-}
-
-func min(x, y int) int {
-	if x < y {
-		return x
-	}
-	return y
+	return int(ajouNormal["box"].(int64)), int(ajouNormal["num"].(int64))
 }
 
 func ajouNormalFunc(dbBoxCount, dbMaxNum int) {
@@ -188,7 +191,7 @@ func scrapeAjouNormalNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL st
 	numNoticeChan := make(chan Notice, maxNumCount)
 	numNotices := make([]Notice, 0, maxNumCount)
 	numNoticeCount := maxNum - dbMaxNum
-	numNoticeCount = min(numNoticeCount, maxNumCount)
+	numNoticeCount = utils.Min(numNoticeCount, maxNumCount)
 
 	if maxNum > dbMaxNum {
 		numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
