@@ -4,10 +4,8 @@ import (
 	"Notifier/internal/utils"
 	"cloud.google.com/go/firestore"
 	"context"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/slack-go/slack"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -29,7 +27,7 @@ var AjouNormalMaxNum int
 func GetAjouNormalFromDB() (int, int) {
 	dsnap, err := utils.Client.Collection("notice").Doc("ajouNormal").Get(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		utils.ErrorLogger.Fatal(err)
 	}
 	ajouNormal := dsnap.Data()
 	return int(ajouNormal["box"].(int64)), int(ajouNormal["num"].(int64))
@@ -63,7 +61,7 @@ func sendMessageToSlack(notice Notice) {
 
 	_, _, err := api.PostMessage("아주대학교-공지사항", slack.MsgOptionAttachments(attachment))
 	if err != nil {
-		log.Fatal(err)
+		utils.ErrorLogger.Fatal(err)
 	}
 }
 
@@ -72,16 +70,16 @@ func scrapeNotice(dbBoxCount, dbMaxNum int) []Notice {
 
 	resp, err := http.Get(noticeURL)
 	if err != nil {
-		log.Fatal(err)
+		utils.ErrorLogger.Fatal(err)
 	}
 	if resp.StatusCode != 200 {
-		log.Fatalf("status code error: %s", resp.Status)
+		utils.ErrorLogger.Fatalf("status code error: %s", resp.Status)
 	}
 	defer resp.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		utils.ErrorLogger.Fatal(err)
 	}
 
 	boxNotices := scrapeBoxNotice(doc, dbBoxCount, noticeURL)
@@ -97,7 +95,7 @@ func scrapeNotice(dbBoxCount, dbMaxNum int) []Notice {
 	}
 
 	for _, notice := range notices {
-		fmt.Println("notice =>", notice)
+		utils.SentNoticeLogger.Println("notice =>", notice)
 	}
 
 	return notices
@@ -132,8 +130,9 @@ func scrapeBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []
 			},
 		})
 		if err != nil {
-			log.Fatal(err)
+			utils.ErrorLogger.Fatal(err)
 		}
+		utils.BoxCountMaxNumLogger.Println("boxCount =>", boxCount)
 	} else if boxCount < dbBoxCount {
 		AjouNormalBoxCount = boxCount
 		_, err := utils.Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
@@ -143,8 +142,9 @@ func scrapeBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []
 			},
 		})
 		if err != nil {
-			log.Fatal(err)
+			utils.ErrorLogger.Fatal(err)
 		}
+		utils.BoxCountMaxNumLogger.Println("boxCount =>", boxCount)
 	}
 
 	return boxNotices
@@ -156,7 +156,7 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []No
 	maxNumText = strings.TrimSpace(maxNumText)
 	maxNum, err := strconv.Atoi(maxNumText)
 	if err != nil {
-		log.Fatal(err)
+		utils.ErrorLogger.Fatal(err)
 	}
 
 	numNoticeChan := make(chan Notice, utils.MaxNumCount)
@@ -185,8 +185,9 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []No
 			},
 		})
 		if err != nil {
-			log.Fatal(err)
+			utils.ErrorLogger.Fatal(err)
 		}
+		utils.BoxCountMaxNumLogger.Println("maxNum =>", maxNum)
 	}
 
 	return numNotices
