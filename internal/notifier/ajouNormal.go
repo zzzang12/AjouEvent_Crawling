@@ -14,13 +14,13 @@ import (
 	"strings"
 )
 
-type AjouNormalNotice struct {
-	Id         string
-	Category   string
-	Title      string
-	Department string
-	Date       string
-	Link       string
+type Notice struct {
+	id         string
+	category   string
+	title      string
+	department string
+	date       string
+	link       string
 }
 
 var AjouNormalBoxCount int
@@ -42,21 +42,21 @@ func AjouNormalFunc(dbBoxCount, dbMaxNum int) {
 	}
 }
 
-func sendMessageToSlack(notice AjouNormalNotice) {
+func sendMessageToSlack(notice Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
 	footer := ""
-	if notice.Id == "공지" {
+	if notice.id == "공지" {
 		footer = "[중요]"
 	}
-	category := strings.Join([]string{"[", notice.Category, "]"}, "")
-	department := strings.Join([]string{"[", notice.Department, "]"}, "")
+	category := strings.Join([]string{"[", notice.category, "]"}, "")
+	department := strings.Join([]string{"[", notice.department, "]"}, "")
 	footer = strings.Join([]string{footer, category, department}, " ")
 
 	attachment := slack.Attachment{
 		Color:      "#0072ce",
-		Title:      strings.Join([]string{notice.Date, notice.Title}, " "),
-		Text:       notice.Link,
+		Title:      strings.Join([]string{notice.date, notice.title}, " "),
+		Text:       notice.link,
 		Footer:     footer,
 		FooterIcon: "https://github.com/zzzang12/Notifier/assets/70265177/48fd0fd7-80e2-4309-93da-8a6bc957aacf",
 	}
@@ -67,7 +67,7 @@ func sendMessageToSlack(notice AjouNormalNotice) {
 	}
 }
 
-func scrapeNotice(dbBoxCount, dbMaxNum int) []AjouNormalNotice {
+func scrapeNotice(dbBoxCount, dbMaxNum int) []Notice {
 	noticeURL := "https://ajou.ac.kr/kr/ajou/notice.do"
 
 	resp, err := http.Get(noticeURL)
@@ -88,7 +88,7 @@ func scrapeNotice(dbBoxCount, dbMaxNum int) []AjouNormalNotice {
 
 	numNotices := scrapeNumNotice(doc, dbMaxNum, noticeURL)
 
-	notices := make([]AjouNormalNotice, 0, len(boxNotices)+len(numNotices))
+	notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
 	for _, notice := range boxNotices {
 		notices = append(notices, notice)
 	}
@@ -103,12 +103,12 @@ func scrapeNotice(dbBoxCount, dbMaxNum int) []AjouNormalNotice {
 	return notices
 }
 
-func scrapeBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []AjouNormalNotice {
+func scrapeBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []Notice {
 	boxNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
 	boxCount := boxNoticeSels.Length()
 
-	boxNoticeChan := make(chan AjouNormalNotice, boxCount)
-	boxNotices := make([]AjouNormalNotice, 0, boxCount)
+	boxNoticeChan := make(chan Notice, boxCount)
+	boxNotices := make([]Notice, 0, boxCount)
 	boxNoticeCount := boxCount - dbBoxCount
 
 	if boxCount > dbBoxCount {
@@ -150,7 +150,7 @@ func scrapeBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []
 	return boxNotices
 }
 
-func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []AjouNormalNotice {
+func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []Notice {
 	numNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
 	maxNumText := numNoticeSels.First().Find("td:nth-child(1)").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
@@ -159,8 +159,8 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []Aj
 		log.Fatal(err)
 	}
 
-	numNoticeChan := make(chan AjouNormalNotice, utils.MaxNumCount)
-	numNotices := make([]AjouNormalNotice, 0, utils.MaxNumCount)
+	numNoticeChan := make(chan Notice, utils.MaxNumCount)
+	numNotices := make([]Notice, 0, utils.MaxNumCount)
 	numNoticeCount := maxNum - dbMaxNum
 	numNoticeCount = utils.Min(numNoticeCount, utils.MaxNumCount)
 
@@ -192,7 +192,7 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []Aj
 	return numNotices
 }
 
-func getNotice(noticeURL string, sel *goquery.Selection, noticeChan chan AjouNormalNotice) {
+func getNotice(noticeURL string, sel *goquery.Selection, noticeChan chan Notice) {
 	id := sel.Find("td:nth-child(1)").Text()
 	id = strings.TrimSpace(id)
 
@@ -222,7 +222,7 @@ func getNotice(noticeURL string, sel *goquery.Selection, noticeChan chan AjouNor
 	}
 	date = strings.Join([]string{month, "월", day, "일"}, "")
 
-	notice := AjouNormalNotice{id, category, title, department, date, link}
+	notice := Notice{id, category, title, department, date, link}
 
 	noticeChan <- notice
 }
