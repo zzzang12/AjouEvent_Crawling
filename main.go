@@ -13,8 +13,6 @@ import (
 )
 
 func main() {
-	start := time.Now()
-
 	boxCountMaxNumLog, err := os.OpenFile("logs/boxCountMaxNumLog.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatal(err)
@@ -48,6 +46,8 @@ func main() {
 		ErrorLogger.Fatal(err)
 	}
 	defer Client.Close()
+
+	start := time.Now()
 
 	AjouNormalBoxCount, AjouNormalMaxNum = GetAjouNormalFromDB()
 
