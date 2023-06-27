@@ -1,7 +1,7 @@
 package notifier
 
 import (
-	"Notifier/internal/utils"
+	. "Notifier/internal/utils"
 	"cloud.google.com/go/firestore"
 	"context"
 	"github.com/PuerkitoBio/goquery"
@@ -25,9 +25,9 @@ var AjouNormalBoxCount int
 var AjouNormalMaxNum int
 
 func GetAjouNormalFromDB() (int, int) {
-	dsnap, err := utils.Client.Collection("notice").Doc("ajouNormal").Get(context.Background())
+	dsnap, err := Client.Collection("notice").Doc("ajouNormal").Get(context.Background())
 	if err != nil {
-		utils.ErrorLogger.Fatal(err)
+		ErrorLogger.Fatal(err)
 	}
 	ajouNormal := dsnap.Data()
 	return int(ajouNormal["box"].(int64)), int(ajouNormal["num"].(int64))
@@ -61,7 +61,7 @@ func sendMessageToSlack(notice Notice) {
 
 	_, _, err := api.PostMessage("아주대학교-공지사항", slack.MsgOptionAttachments(attachment))
 	if err != nil {
-		utils.ErrorLogger.Fatal(err)
+		ErrorLogger.Fatal(err)
 	}
 }
 
@@ -70,16 +70,16 @@ func scrapeNotice(dbBoxCount, dbMaxNum int) []Notice {
 
 	resp, err := http.Get(noticeURL)
 	if err != nil {
-		utils.ErrorLogger.Fatal(err)
+		ErrorLogger.Fatal(err)
 	}
 	if resp.StatusCode != 200 {
-		utils.ErrorLogger.Fatalf("status code error: %s", resp.Status)
+		ErrorLogger.Fatalf("status code error: %s", resp.Status)
 	}
 	defer resp.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		utils.ErrorLogger.Fatal(err)
+		ErrorLogger.Fatal(err)
 	}
 
 	boxNotices := scrapeBoxNotice(doc, dbBoxCount, noticeURL)
@@ -95,7 +95,7 @@ func scrapeNotice(dbBoxCount, dbMaxNum int) []Notice {
 	}
 
 	for _, notice := range notices {
-		utils.SentNoticeLogger.Println("notice =>", notice)
+		SentNoticeLogger.Println("notice =>", notice)
 	}
 
 	return notices
@@ -123,28 +123,28 @@ func scrapeBoxNotice(doc *goquery.Document, dbBoxCount int, noticeURL string) []
 		}
 
 		AjouNormalBoxCount = boxCount
-		_, err := utils.Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		_, err := Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
 				Value: boxCount,
 			},
 		})
 		if err != nil {
-			utils.ErrorLogger.Fatal(err)
+			ErrorLogger.Fatal(err)
 		}
-		utils.BoxCountMaxNumLogger.Println("boxCount =>", boxCount)
+		BoxCountMaxNumLogger.Println("boxCount =>", boxCount)
 	} else if boxCount < dbBoxCount {
 		AjouNormalBoxCount = boxCount
-		_, err := utils.Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		_, err := Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
 				Value: boxCount,
 			},
 		})
 		if err != nil {
-			utils.ErrorLogger.Fatal(err)
+			ErrorLogger.Fatal(err)
 		}
-		utils.BoxCountMaxNumLogger.Println("boxCount =>", boxCount)
+		BoxCountMaxNumLogger.Println("boxCount =>", boxCount)
 	}
 
 	return boxNotices
@@ -156,13 +156,13 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []No
 	maxNumText = strings.TrimSpace(maxNumText)
 	maxNum, err := strconv.Atoi(maxNumText)
 	if err != nil {
-		utils.ErrorLogger.Fatal(err)
+		ErrorLogger.Fatal(err)
 	}
 
-	numNoticeChan := make(chan Notice, utils.MaxNumCount)
-	numNotices := make([]Notice, 0, utils.MaxNumCount)
+	numNoticeChan := make(chan Notice, MaxNumCount)
+	numNotices := make([]Notice, 0, MaxNumCount)
 	numNoticeCount := maxNum - dbMaxNum
-	numNoticeCount = utils.Min(numNoticeCount, utils.MaxNumCount)
+	numNoticeCount = Min(numNoticeCount, MaxNumCount)
 
 	if maxNum > dbMaxNum {
 		numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
@@ -178,16 +178,16 @@ func scrapeNumNotice(doc *goquery.Document, dbMaxNum int, noticeURL string) []No
 		}
 
 		AjouNormalMaxNum = maxNum
-		_, err = utils.Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		_, err = Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
 			{
 				Path:  "num",
 				Value: maxNum,
 			},
 		})
 		if err != nil {
-			utils.ErrorLogger.Fatal(err)
+			ErrorLogger.Fatal(err)
 		}
-		utils.BoxCountMaxNumLogger.Println("maxNum =>", maxNum)
+		BoxCountMaxNumLogger.Println("maxNum =>", maxNum)
 	}
 
 	return numNotices
