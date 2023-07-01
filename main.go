@@ -13,19 +13,19 @@ import (
 )
 
 func main() {
-	boxCountMaxNumLog, err := os.OpenFile("logs/boxCountMaxNumLog.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	boxCountMaxNumLog, err := os.OpenFile("logs/boxCountMaxNumLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer boxCountMaxNumLog.Close()
 
-	errorLog, err := os.OpenFile("logs/errorLog.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	errorLog, err := os.OpenFile("logs/errorLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer errorLog.Close()
 
-	sentNoticeLog, err := os.OpenFile("logs/sentNoticeLog.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	sentNoticeLog, err := os.OpenFile("logs/sentNoticeLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,5 +56,5 @@ func main() {
 	AjouScholarshipFunc(AjouScholarshipBoxCount, AjouScholarshipMaxNum)
 
 	end := time.Since(start)
-	fmt.Println("end =>", end)
+	fmt.Println("Elapsed time =>", end)
 }
