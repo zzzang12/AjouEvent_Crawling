@@ -50,8 +50,10 @@ func main() {
 	start := time.Now()
 
 	AjouNormalBoxCount, AjouNormalMaxNum = GetAjouNormalFromDB()
+	AjouScholarshipBoxCount, AjouScholarshipMaxNum = GetAjouScholarshipFromDB()
 
 	AjouNormalFunc(AjouNormalBoxCount, AjouNormalMaxNum)
+	AjouScholarshipFunc(AjouScholarshipBoxCount, AjouScholarshipMaxNum)
 
 	end := time.Since(start)
 	fmt.Println("end =>", end)
