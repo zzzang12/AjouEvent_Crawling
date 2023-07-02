@@ -50,8 +50,10 @@ func main() {
 	start := time.Now()
 
 	AjouNormal = NewAjouNormal()
+	AjouScholarship = NewAjouScholarship()
 
 	AjouNormal.Notify()
+	AjouScholarship.Notify()
 
 	end := time.Since(start)
 	fmt.Println("Elapsed time =>", end)
