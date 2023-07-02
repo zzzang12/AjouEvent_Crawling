@@ -58,3 +58,7 @@ func main() {
 	end := time.Since(start)
 	fmt.Println("Elapsed time =>", end)
 }
+
+//TODO
+// - Method
+// - WaitGroup
