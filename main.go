@@ -49,16 +49,13 @@ func main() {
 
 	start := time.Now()
 
-	AjouNormalBoxCount, AjouNormalMaxNum = GetAjouNormalFromDB()
-	AjouScholarshipBoxCount, AjouScholarshipMaxNum = GetAjouScholarshipFromDB()
+	AjouNormal = NewAjouNormal()
 
-	AjouNormalFunc(AjouNormalBoxCount, AjouNormalMaxNum)
-	AjouScholarshipFunc(AjouScholarshipBoxCount, AjouScholarshipMaxNum)
+	AjouNormal.Notify()
 
 	end := time.Since(start)
 	fmt.Println("Elapsed time =>", end)
 }
 
 //TODO
-// - Method
-// - WaitGroup
+// - Notify 함수들 goroutine -> select
