@@ -26,6 +26,7 @@ type AjouNormalSource struct {
 	maxNum    int
 	url       string
 	channelID string
+	fsDocID   string
 }
 
 var AjouNormal AjouNormalSource
@@ -42,6 +43,7 @@ func NewAjouNormal() AjouNormalSource {
 		maxNum:    int(dbData["num"].(int64)),
 		url:       "https://ajou.ac.kr/kr/ajou/notice.do",
 		channelID: "아주대학교-공지사항",
+		fsDocID:   "ajouNormal",
 	}
 }
 
@@ -107,29 +109,29 @@ func (source AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []AjouNorm
 			boxNotices = append(boxNotices, <-boxNoticeChan)
 		}
 
-		source.boxCount = boxCount
-		_, err := Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		source.boxCount += boxNoticeCount
+		_, err := Client.Collection("notice").Doc(source.fsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
-				Value: boxCount,
+				Value: source.boxCount,
 			},
 		})
 		if err != nil {
 			ErrorLogger.Fatal(err)
 		}
-		BoxCountMaxNumLogger.Println("boxCount =>", boxCount)
+		BoxCountMaxNumLogger.Println("boxCount =>", source.boxCount)
 	} else if boxCount < source.boxCount {
-		source.boxCount = boxCount
-		_, err := Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		source.boxCount -= boxNoticeCount
+		_, err := Client.Collection("notice").Doc(source.fsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
-				Value: boxCount,
+				Value: source.boxCount,
 			},
 		})
 		if err != nil {
 			ErrorLogger.Fatal(err)
 		}
-		BoxCountMaxNumLogger.Println("boxCount =>", boxCount)
+		BoxCountMaxNumLogger.Println("boxCount =>", source.boxCount)
 	}
 
 	return boxNotices
@@ -162,17 +164,17 @@ func (source AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []AjouNorm
 			numNotices = append(numNotices, <-numNoticeChan)
 		}
 
-		source.maxNum = maxNum
-		_, err = Client.Collection("notice").Doc("ajouNormal").Update(context.Background(), []firestore.Update{
+		source.maxNum += numNoticeCount
+		_, err = Client.Collection("notice").Doc(source.fsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "num",
-				Value: maxNum,
+				Value: source.maxNum,
 			},
 		})
 		if err != nil {
 			ErrorLogger.Fatal(err)
 		}
-		BoxCountMaxNumLogger.Println("maxNum =>", maxNum)
+		BoxCountMaxNumLogger.Println("maxNum =>", source.maxNum)
 	}
 
 	return numNotices
