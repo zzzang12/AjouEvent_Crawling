@@ -109,7 +109,7 @@ func (source AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []AjouNorm
 			boxNotices = append(boxNotices, <-boxNoticeChan)
 		}
 
-		source.boxCount += boxNoticeCount
+		source.boxCount = boxCount
 		_, err := Client.Collection("notice").Doc(source.fsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
@@ -121,7 +121,7 @@ func (source AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []AjouNorm
 		}
 		BoxCountMaxNumLogger.Println("boxCount =>", source.boxCount)
 	} else if boxCount < source.boxCount {
-		source.boxCount -= boxNoticeCount
+		source.boxCount = boxCount
 		_, err := Client.Collection("notice").Doc(source.fsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
@@ -164,7 +164,7 @@ func (source AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []AjouNorm
 			numNotices = append(numNotices, <-numNoticeChan)
 		}
 
-		source.maxNum += numNoticeCount
+		source.maxNum = maxNum
 		_, err = Client.Collection("notice").Doc(source.fsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "num",
