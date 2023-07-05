@@ -29,9 +29,9 @@ type AjouScholarshipSource struct {
 	fsDocID   string
 }
 
-var AjouScholarship AjouScholarshipSource
+var AjouScholarship *AjouScholarshipSource
 
-func NewAjouScholarship() AjouScholarshipSource {
+func NewAjouScholarship() *AjouScholarshipSource {
 	fsDocID := "ajouScholarship"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
@@ -39,7 +39,7 @@ func NewAjouScholarship() AjouScholarshipSource {
 	}
 	dbData := dsnap.Data()
 
-	return AjouScholarshipSource{
+	return &AjouScholarshipSource{
 		boxCount:  int(dbData["box"].(int64)),
 		maxNum:    int(dbData["num"].(int64)),
 		url:       "https://ajou.ac.kr/kr/ajou/notice_scholarship.do",
@@ -48,14 +48,14 @@ func NewAjouScholarship() AjouScholarshipSource {
 	}
 }
 
-func (source AjouScholarshipSource) Notify() {
+func (source *AjouScholarshipSource) Notify() {
 	notices := source.scrapeNotice()
 	for _, notice := range notices {
 		source.sendNoticeToSlack(notice)
 	}
 }
 
-func (source AjouScholarshipSource) scrapeNotice() []AjouScholarshipNotice {
+func (source *AjouScholarshipSource) scrapeNotice() []AjouScholarshipNotice {
 	resp, err := http.Get(source.url)
 	if err != nil {
 		ErrorLogger.Fatal(err)
@@ -89,7 +89,7 @@ func (source AjouScholarshipSource) scrapeNotice() []AjouScholarshipNotice {
 	return notices
 }
 
-func (source AjouScholarshipSource) scrapeBoxNotice(doc *goquery.Document) []AjouScholarshipNotice {
+func (source *AjouScholarshipSource) scrapeBoxNotice(doc *goquery.Document) []AjouScholarshipNotice {
 	boxNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
 	boxCount := boxNoticeSels.Length()
 
@@ -138,7 +138,7 @@ func (source AjouScholarshipSource) scrapeBoxNotice(doc *goquery.Document) []Ajo
 	return boxNotices
 }
 
-func (source AjouScholarshipSource) scrapeNumNotice(doc *goquery.Document) []AjouScholarshipNotice {
+func (source *AjouScholarshipSource) scrapeNumNotice(doc *goquery.Document) []AjouScholarshipNotice {
 	numNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
 	maxNumText := numNoticeSels.First().Find("td:nth-child(1)").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
@@ -181,7 +181,7 @@ func (source AjouScholarshipSource) scrapeNumNotice(doc *goquery.Document) []Ajo
 	return numNotices
 }
 
-func (source AjouScholarshipSource) getNotice(sel *goquery.Selection, noticeChan chan AjouScholarshipNotice) {
+func (source *AjouScholarshipSource) getNotice(sel *goquery.Selection, noticeChan chan AjouScholarshipNotice) {
 	id := sel.Find("td:nth-child(1)").Text()
 	id = strings.TrimSpace(id)
 
@@ -216,7 +216,7 @@ func (source AjouScholarshipSource) getNotice(sel *goquery.Selection, noticeChan
 	noticeChan <- notice
 }
 
-func (source AjouScholarshipSource) sendNoticeToSlack(notice AjouScholarshipNotice) {
+func (source *AjouScholarshipSource) sendNoticeToSlack(notice AjouScholarshipNotice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
 	footer := ""

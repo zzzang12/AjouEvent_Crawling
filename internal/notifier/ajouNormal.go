@@ -29,9 +29,9 @@ type AjouNormalSource struct {
 	fsDocID   string
 }
 
-var AjouNormal AjouNormalSource
+var AjouNormal *AjouNormalSource
 
-func NewAjouNormal() AjouNormalSource {
+func NewAjouNormal() *AjouNormalSource {
 	fsDocID := "ajouNormal"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
@@ -39,7 +39,7 @@ func NewAjouNormal() AjouNormalSource {
 	}
 	dbData := dsnap.Data()
 
-	return AjouNormalSource{
+	return &AjouNormalSource{
 		boxCount:  int(dbData["box"].(int64)),
 		maxNum:    int(dbData["num"].(int64)),
 		url:       "https://ajou.ac.kr/kr/ajou/notice.do",
@@ -48,14 +48,14 @@ func NewAjouNormal() AjouNormalSource {
 	}
 }
 
-func (source AjouNormalSource) Notify() {
+func (source *AjouNormalSource) Notify() {
 	notices := source.scrapeNotice()
 	for _, notice := range notices {
 		source.sendNoticeToSlack(notice)
 	}
 }
 
-func (source AjouNormalSource) scrapeNotice() []AjouNormalNotice {
+func (source *AjouNormalSource) scrapeNotice() []AjouNormalNotice {
 	resp, err := http.Get(source.url)
 	if err != nil {
 		ErrorLogger.Fatal(err)
@@ -89,7 +89,7 @@ func (source AjouNormalSource) scrapeNotice() []AjouNormalNotice {
 	return notices
 }
 
-func (source AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []AjouNormalNotice {
+func (source *AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []AjouNormalNotice {
 	boxNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
 	boxCount := boxNoticeSels.Length()
 
@@ -138,7 +138,7 @@ func (source AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []AjouNorm
 	return boxNotices
 }
 
-func (source AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []AjouNormalNotice {
+func (source *AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []AjouNormalNotice {
 	numNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
 	maxNumText := numNoticeSels.First().Find("td:nth-child(1)").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
@@ -181,7 +181,7 @@ func (source AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []AjouNorm
 	return numNotices
 }
 
-func (source AjouNormalSource) getNotice(sel *goquery.Selection, noticeChan chan AjouNormalNotice) {
+func (source *AjouNormalSource) getNotice(sel *goquery.Selection, noticeChan chan AjouNormalNotice) {
 	id := sel.Find("td:nth-child(1)").Text()
 	id = strings.TrimSpace(id)
 
@@ -216,7 +216,7 @@ func (source AjouNormalSource) getNotice(sel *goquery.Selection, noticeChan chan
 	noticeChan <- notice
 }
 
-func (source AjouNormalSource) sendNoticeToSlack(notice AjouNormalNotice) {
+func (source *AjouNormalSource) sendNoticeToSlack(notice AjouNormalNotice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
 	footer := ""
