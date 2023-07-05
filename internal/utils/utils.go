@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"bufio"
 	"cloud.google.com/go/firestore"
+	"fmt"
 	"log"
+	"os"
 )
 
 const MaxNumCount int = 10
@@ -17,4 +20,17 @@ func Min(x, y int) int {
 		return x
 	}
 	return y
+}
+
+func InputExit(exitChan chan bool) {
+	var str string
+	for {
+		_, err := fmt.Fscanln(bufio.NewReader(os.Stdin), &str)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if str == "exit" {
+			exitChan <- true
+		}
+	}
 }

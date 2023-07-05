@@ -5,7 +5,6 @@ import (
 	. "Notifier/internal/utils"
 	"context"
 	firebase "firebase.google.com/go"
-	"fmt"
 	"google.golang.org/api/option"
 	"log"
 	"os"
@@ -47,17 +46,23 @@ func main() {
 	}
 	defer Client.Close()
 
-	start := time.Now()
+	noticeTicker := time.NewTicker(10 * time.Second)
+	defer noticeTicker.Stop()
+
+	exitChan := make(chan bool, 1)
+	go InputExit(exitChan)
 
 	AjouNormal = NewAjouNormal()
 	AjouScholarship = NewAjouScholarship()
 
-	AjouNormal.Notify()
-	AjouScholarship.Notify()
-
-	end := time.Since(start)
-	fmt.Println("Elapsed time =>", end)
+	for {
+		select {
+		case <-exitChan:
+			return
+		case <-noticeTicker.C:
+			log.Print("working")
+			go AjouNormal.Notify()
+			go AjouScholarship.Notify()
+		}
+	}
 }
-
-//TODO
-// - Notify 함수들 goroutine -> select

@@ -32,7 +32,8 @@ type AjouScholarshipSource struct {
 var AjouScholarship AjouScholarshipSource
 
 func NewAjouScholarship() AjouScholarshipSource {
-	dsnap, err := Client.Collection("notice").Doc("ajouScholarship").Get(context.Background())
+	fsDocID := "ajouScholarship"
+	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
 		ErrorLogger.Fatal(err)
 	}
@@ -43,7 +44,7 @@ func NewAjouScholarship() AjouScholarshipSource {
 		maxNum:    int(dbData["num"].(int64)),
 		url:       "https://ajou.ac.kr/kr/ajou/notice_scholarship.do",
 		channelID: "아주대학교-공지사항",
-		fsDocID:   "ajouScholarship",
+		fsDocID:   fsDocID,
 	}
 }
 

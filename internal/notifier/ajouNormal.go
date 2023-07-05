@@ -32,7 +32,8 @@ type AjouNormalSource struct {
 var AjouNormal AjouNormalSource
 
 func NewAjouNormal() AjouNormalSource {
-	dsnap, err := Client.Collection("notice").Doc("ajouNormal").Get(context.Background())
+	fsDocID := "ajouNormal"
+	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
 		ErrorLogger.Fatal(err)
 	}
@@ -43,7 +44,7 @@ func NewAjouNormal() AjouNormalSource {
 		maxNum:    int(dbData["num"].(int64)),
 		url:       "https://ajou.ac.kr/kr/ajou/notice.do",
 		channelID: "아주대학교-공지사항",
-		fsDocID:   "ajouNormal",
+		fsDocID:   fsDocID,
 	}
 }
 
