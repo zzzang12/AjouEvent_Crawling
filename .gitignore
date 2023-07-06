@@ -2,3 +2,4 @@
 *.exe
 serviceAccountKey.json
 *Log.txt
+internal/notifier/noticeTest.go
