@@ -52,8 +52,8 @@ func main() {
 	exitChan := make(chan bool, 1)
 	go InputExit(exitChan)
 
-	AjouNormal = NewAjouNormal()
-	AjouScholarship = NewAjouScholarship()
+	AjouNormal = AjouNormalSource{}.New()
+	AjouScholarship = AjouScholarshipSource{}.New()
 
 	for {
 		select {

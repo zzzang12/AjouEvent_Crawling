@@ -8,6 +8,23 @@ import (
 	"os"
 )
 
+type Notice struct {
+	ID         string
+	Category   string
+	Title      string
+	Department string
+	Date       string
+	Link       string
+}
+
+type NoticeSource struct {
+	BoxCount  int
+	MaxNum    int
+	URL       string
+	ChannelID string
+	FsDocID   string
+}
+
 const MaxNumCount int = 10
 
 var BoxCountMaxNumLogger *log.Logger
