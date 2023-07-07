@@ -63,6 +63,7 @@ func main() {
 			log.Print("working")
 			go AjouNormal.Notify()
 			go AjouScholarship.Notify()
+
 		}
 	}
 }
