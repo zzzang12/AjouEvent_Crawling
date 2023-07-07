@@ -4,6 +4,7 @@ import (
 	. "Notifier/internal/utils"
 	"cloud.google.com/go/firestore"
 	"context"
+	"errors"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/slack-go/slack"
 	"net/http"
@@ -35,11 +36,6 @@ func (AjouNormalSource) New() *AjouNormalSource {
 }
 
 func (source *AjouNormalSource) Notify() {
-	//err := source.checkHTML()
-	//if err != nil {
-	//	ErrorLogger.Fatal(err)
-	//}
-
 	notices := source.scrapeNotice()
 	for _, notice := range notices {
 		source.sendNoticeToSlack(notice)
@@ -61,6 +57,11 @@ func (source *AjouNormalSource) scrapeNotice() []Notice {
 		ErrorLogger.Fatal(err)
 	}
 
+	err = source.checkHTML(doc)
+	if err != nil {
+		ErrorLogger.Fatal(err)
+	}
+
 	boxNotices := source.scrapeBoxNotice(doc)
 
 	numNotices := source.scrapeNumNotice(doc)
@@ -78,6 +79,27 @@ func (source *AjouNormalSource) scrapeNotice() []Notice {
 	}
 
 	return notices
+}
+
+func (source *AjouNormalSource) checkHTML(doc *goquery.Document) error {
+	sel1 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
+	sel2 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
+	if sel1.Nodes == nil || sel2.Nodes == nil ||
+		sel1.Find("td:nth-child(1)").Nodes == nil ||
+		sel1.Find("td:nth-child(2)").Nodes == nil ||
+		sel1.Find("td:nth-child(3) > div > a").Nodes == nil ||
+		sel1.Find("td:nth-child(3) > div > a").Nodes == nil ||
+		sel1.Find("td:nth-child(5)").Nodes == nil ||
+		sel1.Find("td:nth-child(6)").Nodes == nil ||
+		sel2.Find("td:nth-child(1)").Nodes == nil ||
+		sel2.Find("td:nth-child(2)").Nodes == nil ||
+		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
+		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
+		sel2.Find("td:nth-child(5)").Nodes == nil ||
+		sel2.Find("td:nth-child(6)").Nodes == nil {
+		return errors.New("notifier can't work because HTML structure has changed")
+	}
+	return nil
 }
 
 func (source *AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []Notice {
