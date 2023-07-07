@@ -35,6 +35,11 @@ func (AjouNormalSource) New() *AjouNormalSource {
 }
 
 func (source *AjouNormalSource) Notify() {
+	//err := source.checkHTML()
+	//if err != nil {
+	//	ErrorLogger.Fatal(err)
+	//}
+
 	notices := source.scrapeNotice()
 	for _, notice := range notices {
 		source.sendNoticeToSlack(notice)

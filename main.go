@@ -12,6 +12,8 @@ import (
 )
 
 func main() {
+	CreateDir("./logs")
+
 	boxCountMaxNumLog, err := os.OpenFile("logs/boxCountMaxNumLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
 	if err != nil {
 		log.Fatal(err)
@@ -46,7 +48,7 @@ func main() {
 	}
 	defer Client.Close()
 
-	noticeTicker := time.NewTicker(10 * time.Second)
+	noticeTicker := time.NewTicker(5 * time.Second)
 	defer noticeTicker.Stop()
 
 	exitChan := make(chan bool, 1)

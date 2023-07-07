@@ -32,6 +32,16 @@ var ErrorLogger *log.Logger
 var SentNoticeLogger *log.Logger
 var Client *firestore.Client
 
+func CreateDir(dir string) {
+	_, err := os.Stat(dir)
+	if os.IsNotExist(err) {
+		err = os.Mkdir("logs", os.ModePerm)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
 func Min(x, y int) int {
 	if x < y {
 		return x
