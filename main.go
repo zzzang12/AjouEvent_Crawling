@@ -54,6 +54,7 @@ func main() {
 
 	AjouNormal = AjouNormalSource{}.New()
 	AjouScholarship = AjouScholarshipSource{}.New()
+	AjouSw = AjouSwSource{}.New()
 
 	for {
 		select {
@@ -63,7 +64,7 @@ func main() {
 			log.Print("working")
 			go AjouNormal.Notify()
 			go AjouScholarship.Notify()
-
+			go AjouSw.Notify()
 		}
 	}
 }
