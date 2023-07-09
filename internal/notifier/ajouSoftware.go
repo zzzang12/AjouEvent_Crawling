@@ -149,7 +149,7 @@ func (source *AjouSoftwareSource) scrapeBoxNotice(doc *goquery.Document) []Notic
 
 func (source *AjouSoftwareSource) scrapeNumNotice(doc *goquery.Document) []Notice {
 	numNoticeSels := doc.Find("#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):not(:has(td:first-child > img))")
-	maxNumText := numNoticeSels.First().Find("td:nth-child(1)").Text()
+	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
 	maxNum, err := strconv.Atoi(maxNumText)
 	if err != nil {
@@ -229,7 +229,7 @@ func (source *AjouSoftwareSource) getNotice(sel *goquery.Selection, noticeChan c
 func (source *AjouSoftwareSource) sendNoticeToSlack(notice Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
-	footer := ""
+	var footer string
 	if notice.ID == "공지" {
 		footer = "[중요]"
 	}
