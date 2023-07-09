@@ -28,11 +28,10 @@ func (AjouSoftwareSource) New() *AjouSoftwareSource {
 	dbData := dsnap.Data()
 
 	return &AjouSoftwareSource{
-		BoxCount: int(dbData["box"].(int64)),
-		MaxNum:   int(dbData["num"].(int64)),
-		URL:      "http://software.ajou.ac.kr/bbs/board.php?tbl=notice",
-		//ChannelID: "소프트웨어학과-공지사항",
-		ChannelID: "테스트",
+		BoxCount:  int(dbData["box"].(int64)),
+		MaxNum:    int(dbData["num"].(int64)),
+		URL:       "http://software.ajou.ac.kr/bbs/board.php?tbl=notice",
+		ChannelID: "소프트웨어학과-공지사항",
 		FsDocID:   fsDocID,
 	}
 }
@@ -84,6 +83,14 @@ func (source *AjouSoftwareSource) scrapeNotice() []Notice {
 }
 
 func (source *AjouSoftwareSource) checkHTML(doc *goquery.Document) error {
+	if source.isInvalidHTML(doc) {
+		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", source.ChannelID}, "")
+		return errors.New(errMsg)
+	}
+	return nil
+}
+
+func (source *AjouSoftwareSource) isInvalidHTML(doc *goquery.Document) bool {
 	sel1 := doc.Find("#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):has(td:first-child > img)")
 	sel2 := doc.Find("#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):not(:has(td:first-child > img))")
 	if sel1.Nodes == nil || sel2.Nodes == nil ||
@@ -93,10 +100,9 @@ func (source *AjouSoftwareSource) checkHTML(doc *goquery.Document) error {
 		sel2.Find("td:nth-child(1)").Nodes == nil ||
 		sel2.Find("td:nth-child(3) > a").Nodes == nil ||
 		sel2.Find("td:nth-child(3) > p:first-of-type").Nodes == nil {
-		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", source.ChannelID}, "")
-		return errors.New(errMsg)
+		return true
 	}
-	return nil
+	return false
 }
 
 func (source *AjouSoftwareSource) scrapeBoxNotice(doc *goquery.Document) []Notice {

@@ -81,6 +81,14 @@ func (source *AjouNormalSource) scrapeNotice() []Notice {
 }
 
 func (source *AjouNormalSource) checkHTML(doc *goquery.Document) error {
+	if source.isInvalidHTML(doc) {
+		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", "아주대학교-일반공지사항"}, "")
+		return errors.New(errMsg)
+	}
+	return nil
+}
+
+func (source *AjouNormalSource) isInvalidHTML(doc *goquery.Document) bool {
 	sel1 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
 	sel2 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
 	if sel1.Nodes == nil || sel2.Nodes == nil ||
@@ -96,10 +104,9 @@ func (source *AjouNormalSource) checkHTML(doc *goquery.Document) error {
 		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel2.Find("td:nth-child(5)").Nodes == nil ||
 		sel2.Find("td:nth-child(6)").Nodes == nil {
-		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", source.ChannelID}, "")
-		return errors.New(errMsg)
+		return true
 	}
-	return nil
+	return false
 }
 
 func (source *AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []Notice {

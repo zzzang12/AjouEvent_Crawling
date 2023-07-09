@@ -26,11 +26,10 @@ func (AjouSwSource) New() *AjouSwSource {
 	dbData := dsnap.Data()
 
 	return &AjouSwSource{
-		BoxCount: int(dbData["box"].(int64)),
-		MaxNum:   int(dbData["num"].(int64)),
-		URL:      "https://sw.ajou.ac.kr/sw/board/notice.do",
-		//ChannelID: "소프트웨어융합대학-공지사항",
-		ChannelID: "테스트",
+		BoxCount:  int(dbData["box"].(int64)),
+		MaxNum:    int(dbData["num"].(int64)),
+		URL:       "https://sw.ajou.ac.kr/sw/board/notice.do",
+		ChannelID: "소프트웨어융합대학-공지사항",
 		FsDocID:   fsDocID,
 	}
 }
@@ -82,6 +81,14 @@ func (source *AjouSwSource) scrapeNotice() []Notice {
 }
 
 func (source *AjouSwSource) checkHTML(doc *goquery.Document) error {
+	if source.isInvalidHTML(doc) {
+		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", source.ChannelID}, "")
+		return errors.New(errMsg)
+	}
+	return nil
+}
+
+func (source *AjouSwSource) isInvalidHTML(doc *goquery.Document) bool {
 	sel1 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
 	sel2 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
 	if sel1.Nodes == nil || sel2.Nodes == nil ||
@@ -97,10 +104,9 @@ func (source *AjouSwSource) checkHTML(doc *goquery.Document) error {
 		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel2.Find("td:nth-child(5)").Nodes == nil ||
 		sel2.Find("td:nth-child(6)").Nodes == nil {
-		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", source.ChannelID}, "")
-		return errors.New(errMsg)
+		return true
 	}
-	return nil
+	return false
 }
 
 func (source *AjouSwSource) scrapeBoxNotice(doc *goquery.Document) []Notice {
