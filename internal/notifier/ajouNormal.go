@@ -153,7 +153,7 @@ func (source *AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []Notice 
 
 func (source *AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []Notice {
 	numNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
-	maxNumText := numNoticeSels.First().Find("td:nth-child(1)").Text()
+	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
 	maxNum, err := strconv.Atoi(maxNumText)
 	if err != nil {
