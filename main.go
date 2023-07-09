@@ -55,8 +55,9 @@ func main() {
 	go InputExit(exitChan)
 
 	AjouNormal = AjouNormalSource{}.New()
-	AjouScholarship = AjouScholarshipSource{}.New()
-	AjouSw = AjouSwSource{}.New()
+	//AjouScholarship = AjouScholarshipSource{}.New()
+	//AjouSw = AjouSwSource{}.New()
+	AjouSoftware = AjouSoftwareSource{}.New()
 
 	for {
 		select {
@@ -65,8 +66,9 @@ func main() {
 		case <-noticeTicker.C:
 			log.Print("working")
 			go AjouNormal.Notify()
-			go AjouScholarship.Notify()
-			go AjouSw.Notify()
+			//go AjouScholarship.Notify()
+			//go AjouSw.Notify()
+			go AjouSoftware.Notify()
 		}
 	}
 }
