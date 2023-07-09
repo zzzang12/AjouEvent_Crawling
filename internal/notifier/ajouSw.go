@@ -97,7 +97,8 @@ func (source *AjouSwSource) checkHTML(doc *goquery.Document) error {
 		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel2.Find("td:nth-child(5)").Nodes == nil ||
 		sel2.Find("td:nth-child(6)").Nodes == nil {
-		return errors.New("notifier can't work because HTML structure has changed")
+		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", source.ChannelID}, "")
+		return errors.New(errMsg)
 	}
 	return nil
 }

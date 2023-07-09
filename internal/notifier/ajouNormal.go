@@ -26,11 +26,10 @@ func (AjouNormalSource) New() *AjouNormalSource {
 	dbData := dsnap.Data()
 
 	return &AjouNormalSource{
-		BoxCount: int(dbData["box"].(int64)),
-		MaxNum:   int(dbData["num"].(int64)),
-		URL:      "https://ajou.ac.kr/kr/ajou/notice.do",
-		//ChannelID: "아주대학교-공지사항",
-		ChannelID: "테스트",
+		BoxCount:  int(dbData["box"].(int64)),
+		MaxNum:    int(dbData["num"].(int64)),
+		URL:       "https://ajou.ac.kr/kr/ajou/notice.do",
+		ChannelID: "아주대학교-공지사항",
 		FsDocID:   fsDocID,
 	}
 }
@@ -97,7 +96,8 @@ func (source *AjouNormalSource) checkHTML(doc *goquery.Document) error {
 		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel2.Find("td:nth-child(5)").Nodes == nil ||
 		sel2.Find("td:nth-child(6)").Nodes == nil {
-		return errors.New("notifier can't work because HTML structure has changed")
+		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", source.ChannelID}, "")
+		return errors.New(errMsg)
 	}
 	return nil
 }
