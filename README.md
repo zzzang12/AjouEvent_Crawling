@@ -12,3 +12,9 @@
 | Design   | UI 디자인 변경            |
 | Docs     | 문서 작업                |
 | Chore    | 기타                   |
+
+git clone
+
+move serviceAccountKey.json
+
+add SLACK_TOKEN env
