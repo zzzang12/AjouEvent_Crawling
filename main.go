@@ -51,9 +51,6 @@ func main() {
 	noticeTicker := time.NewTicker(5 * time.Second)
 	defer noticeTicker.Stop()
 
-	exitChan := make(chan bool, 1)
-	go InputExit(exitChan)
-
 	AjouNormal = AjouNormalSource{}.New()
 	AjouScholarship = AjouScholarshipSource{}.New()
 	AjouSw = AjouSwSource{}.New()
@@ -61,8 +58,6 @@ func main() {
 
 	for {
 		select {
-		case <-exitChan:
-			return
 		case <-noticeTicker.C:
 			log.Print("working")
 			go AjouNormal.Notify()
