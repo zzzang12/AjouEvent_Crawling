@@ -18,7 +18,7 @@ import (
 
 type AjouSoftwareSource NoticeSource
 
-func (AjouSoftwareSource) New() *AjouSoftwareSource {
+func (AjouSoftwareSource) NewNotifier() *AjouSoftwareSource {
 	fsDocID := "ajouSoftware"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {

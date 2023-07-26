@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+type Notifier interface {
+	Notify()
+}
+
 type Notice struct {
 	ID         string
 	Category   string
