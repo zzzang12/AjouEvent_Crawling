@@ -16,8 +16,6 @@ import (
 
 type AjouScholarshipSource NoticeSource
 
-var AjouScholarship *AjouScholarshipSource
-
 func (AjouScholarshipSource) New() *AjouScholarshipSource {
 	fsDocID := "ajouScholarship"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())

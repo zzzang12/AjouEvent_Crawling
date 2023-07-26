@@ -18,8 +18,6 @@ import (
 
 type AjouSoftwareSource NoticeSource
 
-var AjouSoftware *AjouSoftwareSource
-
 func (AjouSoftwareSource) New() *AjouSoftwareSource {
 	fsDocID := "ajouSoftware"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())

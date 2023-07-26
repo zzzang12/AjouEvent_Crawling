@@ -53,10 +53,10 @@ func main() {
 	noticeTicker := time.NewTicker(5 * time.Second)
 	defer noticeTicker.Stop()
 
-	AjouNormal = AjouNormalSource{}.New()
-	AjouScholarship = AjouScholarshipSource{}.New()
-	AjouSw = AjouSwSource{}.New()
-	AjouSoftware = AjouSoftwareSource{}.New()
+	AjouNormal := AjouNormalSource{}.New()
+	AjouScholarship := AjouScholarshipSource{}.New()
+	AjouSw := AjouSwSource{}.New()
+	AjouSoftware := AjouSoftwareSource{}.New()
 
 	for {
 		select {

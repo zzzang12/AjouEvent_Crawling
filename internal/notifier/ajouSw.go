@@ -16,8 +16,6 @@ import (
 
 type AjouSwSource NoticeSource
 
-var AjouSw *AjouSwSource
-
 func (AjouSwSource) New() *AjouSwSource {
 	fsDocID := "ajouSw"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
