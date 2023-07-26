@@ -14,17 +14,17 @@ import (
 func main() {
 	CreateDir("./logs")
 
-	boxCountMaxNumLog, err := os.OpenFile("logs/boxCountMaxNumLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer boxCountMaxNumLog.Close()
-
 	errorLog, err := os.OpenFile("logs/errorLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer errorLog.Close()
+
+	boxCountMaxNumLog, err := os.OpenFile("logs/boxCountMaxNumLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer boxCountMaxNumLog.Close()
 
 	sentNoticeLog, err := os.OpenFile("logs/sentNoticeLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
 	if err != nil {
@@ -40,10 +40,12 @@ func main() {
 	sa := option.WithCredentialsFile("serviceAccountKey.json")
 	app, err := firebase.NewApp(ctx, nil, sa)
 	if err != nil {
+		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 	Client, err = app.Firestore(ctx)
 	if err != nil {
+		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 	defer Client.Close()
