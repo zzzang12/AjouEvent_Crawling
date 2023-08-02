@@ -40,12 +40,10 @@ func main() {
 	sa := option.WithCredentialsFile("serviceAccountKey.json")
 	app, err := firebase.NewApp(ctx, nil, sa)
 	if err != nil {
-		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 	Client, err = app.Firestore(ctx)
 	if err != nil {
-		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 	defer Client.Close()

@@ -5,7 +5,6 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/slack-go/slack"
 	"golang.org/x/text/encoding/korean"
@@ -22,7 +21,6 @@ func (AjouSoftwareSource) NewNotifier() *AjouSoftwareSource {
 	fsDocID := "ajouSoftware"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
-		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 	dbData := dsnap.Data()
@@ -46,24 +44,20 @@ func (source *AjouSoftwareSource) Notify() {
 func (source *AjouSoftwareSource) scrapeNotice() []Notice {
 	resp, err := http.Get(source.URL)
 	if err != nil {
-		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 	if resp.StatusCode != 200 {
-		SendErrorToSlack(fmt.Errorf("status code error: %s", resp.Status))
 		ErrorLogger.Fatalf("status code error: %s", resp.Status)
 	}
 	defer resp.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 
 	err = source.checkHTML(doc)
 	if err != nil {
-		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 
@@ -138,7 +132,6 @@ func (source *AjouSoftwareSource) scrapeBoxNotice(doc *goquery.Document) []Notic
 			},
 		})
 		if err != nil {
-			SendErrorToSlack(err)
 			ErrorLogger.Fatal(err)
 		}
 		BoxCountMaxNumLogger.Println("boxCount =>", source.BoxCount)
@@ -151,7 +144,6 @@ func (source *AjouSoftwareSource) scrapeBoxNotice(doc *goquery.Document) []Notic
 			},
 		})
 		if err != nil {
-			SendErrorToSlack(err)
 			ErrorLogger.Fatal(err)
 		}
 		BoxCountMaxNumLogger.Println("boxCount =>", source.BoxCount)
@@ -166,7 +158,6 @@ func (source *AjouSoftwareSource) scrapeNumNotice(doc *goquery.Document) []Notic
 	maxNumText = strings.TrimSpace(maxNumText)
 	maxNum, err := strconv.Atoi(maxNumText)
 	if err != nil {
-		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 
@@ -196,7 +187,6 @@ func (source *AjouSoftwareSource) scrapeNumNotice(doc *goquery.Document) []Notic
 			},
 		})
 		if err != nil {
-			SendErrorToSlack(err)
 			ErrorLogger.Fatal(err)
 		}
 		BoxCountMaxNumLogger.Println("maxNum =>", source.MaxNum)
@@ -260,7 +250,6 @@ func (source *AjouSoftwareSource) sendNoticeToSlack(notice Notice) {
 
 	_, _, err := api.PostMessage(source.ChannelID, slack.MsgOptionAttachments(attachment))
 	if err != nil {
-		SendErrorToSlack(err)
 		ErrorLogger.Fatal(err)
 	}
 }
