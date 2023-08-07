@@ -48,7 +48,7 @@ func main() {
 	}
 	defer Client.Close()
 
-	noticeTicker := time.NewTicker(5 * time.Second)
+	noticeTicker := time.NewTicker(10 * time.Second)
 	defer noticeTicker.Stop()
 
 	Notifiers := make([]Notifier, 0, NotifierCount)
