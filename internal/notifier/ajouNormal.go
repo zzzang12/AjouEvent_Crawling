@@ -19,7 +19,7 @@ func (AjouNormalSource) NewNotifier() *AjouNormalSource {
 	fsDocID := "ajouNormal"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
-		ErrorLogger.Fatal(err)
+		ErrorLogger.Panic(err)
 	}
 	dbData := dsnap.Data()
 
@@ -33,6 +33,10 @@ func (AjouNormalSource) NewNotifier() *AjouNormalSource {
 }
 
 func (source *AjouNormalSource) Notify() {
+	defer func() {
+		recover()
+	}()
+
 	notices := source.scrapeNotice()
 	for _, notice := range notices {
 		source.sendNoticeToSlack(notice)
@@ -42,21 +46,22 @@ func (source *AjouNormalSource) Notify() {
 func (source *AjouNormalSource) scrapeNotice() []Notice {
 	resp, err := http.Get(source.URL)
 	if err != nil {
-		ErrorLogger.Fatal(err)
+		ErrorLogger.Panic(err)
 	}
-	if resp.StatusCode != 200 {
-		ErrorLogger.Fatalf("status code error: %s", resp.Status)
+	if resp.StatusCode != 300 {
+		//ErrorLogger.Panicf("status code error: %s", resp.Status)
+		ErrorLogger.Panicf("status code error: %s", resp.Status)
 	}
 	defer resp.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		ErrorLogger.Fatal(err)
+		ErrorLogger.Panic(err)
 	}
 
 	err = source.checkHTML(doc)
 	if err != nil {
-		ErrorLogger.Fatal(err)
+		ErrorLogger.Panic(err)
 	}
 
 	boxNotices := source.scrapeBoxNotice(doc)
@@ -136,7 +141,7 @@ func (source *AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []Notice 
 			},
 		})
 		if err != nil {
-			ErrorLogger.Fatal(err)
+			ErrorLogger.Panic(err)
 		}
 		BoxCountMaxNumLogger.Println("boxCount =>", source.BoxCount)
 	} else if boxCount < source.BoxCount {
@@ -148,7 +153,7 @@ func (source *AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []Notice 
 			},
 		})
 		if err != nil {
-			ErrorLogger.Fatal(err)
+			ErrorLogger.Panic(err)
 		}
 		BoxCountMaxNumLogger.Println("boxCount =>", source.BoxCount)
 	}
@@ -162,7 +167,7 @@ func (source *AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []Notice 
 	maxNumText = strings.TrimSpace(maxNumText)
 	maxNum, err := strconv.Atoi(maxNumText)
 	if err != nil {
-		ErrorLogger.Fatal(err)
+		ErrorLogger.Panic(err)
 	}
 
 	numNoticeChan := make(chan Notice, MaxNumCount)
@@ -191,7 +196,7 @@ func (source *AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []Notice 
 			},
 		})
 		if err != nil {
-			ErrorLogger.Fatal(err)
+			ErrorLogger.Panic(err)
 		}
 		BoxCountMaxNumLogger.Println("maxNum =>", source.MaxNum)
 	}
@@ -255,6 +260,6 @@ func (source *AjouNormalSource) sendNoticeToSlack(notice Notice) {
 
 	_, _, err := api.PostMessage(source.ChannelID, slack.MsgOptionAttachments(attachment))
 	if err != nil {
-		ErrorLogger.Fatal(err)
+		ErrorLogger.Panic(err)
 	}
 }
