@@ -48,8 +48,7 @@ func (source *AjouNormalSource) scrapeNotice() []Notice {
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
-	if resp.StatusCode != 300 {
-		//ErrorLogger.Panicf("status code error: %s", resp.Status)
+	if resp.StatusCode != 200 {
 		ErrorLogger.Panicf("status code error: %s", resp.Status)
 	}
 	defer resp.Body.Close()
