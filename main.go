@@ -1,8 +1,8 @@
 package main
 
 import (
-	. "Notifier/internal/notifier"
-	. "Notifier/internal/utils"
+	. "Notifier/src/notifier"
+	. "Notifier/src/utils"
 	"context"
 	firebase "firebase.google.com/go"
 	"google.golang.org/api/option"
