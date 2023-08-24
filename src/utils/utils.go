@@ -27,7 +27,6 @@ type NoticeSource struct {
 	FsDocID   string
 }
 
-const MaxNumCount int = 10
 const NotifierCount int = 4
 
 var BoxCountMaxNumLogger *log.Logger
