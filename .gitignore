@@ -1,7 +1,6 @@
 .idea
 *.exe
 main
-notifier
 serviceAccountKey.json
 *Log.txt
 internal/notifier/noticeTest.go
