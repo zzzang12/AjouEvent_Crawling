@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/firestore v1.12.0
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/PuerkitoBio/goquery v1.8.1
-	github.com/slack-go/slack v0.12.2
+	github.com/slack-go/slack v0.12.3
 	golang.org/x/text v0.12.0
 	google.golang.org/api v0.138.0
 )
