@@ -28,8 +28,8 @@ type NoticeSource struct {
 }
 
 const (
-	MaxNumNoticeCount int = 10
-	NotifierCount     int = 4
+	MaxNumNoticeCount = 10
+	NotifierCount     = 4
 )
 
 var BoxCountMaxNumLogger *log.Logger
