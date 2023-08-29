@@ -169,7 +169,7 @@ func (source *AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []Notice 
 		ErrorLogger.Panic(err)
 	}
 
-	numNoticeCount := maxNum - source.MaxNum
+	numNoticeCount := min(maxNum-source.MaxNum, MaxNumNoticeCount)
 	numNoticeChan := make(chan Notice, numNoticeCount)
 	numNotices := make([]Notice, 0, numNoticeCount)
 
