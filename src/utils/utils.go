@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-type Notifier interface {
+type Source interface {
 	Notify()
 }
 
