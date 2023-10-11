@@ -13,9 +13,9 @@ import (
 	"strings"
 )
 
-type AjouNormalSource NoticeSource
+type AjouNormalNotifier Notifier
 
-func (AjouNormalSource) NewNotifier() *AjouNormalSource {
+func (AjouNormalNotifier) NewNotifier() *AjouNormalNotifier {
 	fsDocID := "ajouNormal"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
@@ -23,7 +23,7 @@ func (AjouNormalSource) NewNotifier() *AjouNormalSource {
 	}
 	dbData := dsnap.Data()
 
-	return &AjouNormalSource{
+	return &AjouNormalNotifier{
 		BoxCount:  int(dbData["box"].(int64)),
 		MaxNum:    int(dbData["num"].(int64)),
 		URL:       "https://ajou.ac.kr/kr/ajou/notice.do",
@@ -32,19 +32,19 @@ func (AjouNormalSource) NewNotifier() *AjouNormalSource {
 	}
 }
 
-func (source *AjouNormalSource) Notify() {
+func (notifier *AjouNormalNotifier) Notify() {
 	defer func() {
 		recover()
 	}()
 
-	notices := source.scrapeNotice()
+	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		source.sendNoticeToSlack(notice)
+		notifier.sendNoticeToSlack(notice)
 	}
 }
 
-func (source *AjouNormalSource) scrapeNotice() []Notice {
-	resp, err := http.Get(source.URL)
+func (notifier *AjouNormalNotifier) scrapeNotice() []Notice {
+	resp, err := http.Get(notifier.URL)
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
@@ -58,14 +58,14 @@ func (source *AjouNormalSource) scrapeNotice() []Notice {
 		ErrorLogger.Panic(err)
 	}
 
-	err = source.checkHTML(doc)
+	err = notifier.checkHTML(doc)
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
 
-	boxNotices := source.scrapeBoxNotice(doc)
+	boxNotices := notifier.scrapeBoxNotice(doc)
 
-	numNotices := source.scrapeNumNotice(doc)
+	numNotices := notifier.scrapeNumNotice(doc)
 
 	notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
 	for _, notice := range boxNotices {
@@ -82,15 +82,15 @@ func (source *AjouNormalSource) scrapeNotice() []Notice {
 	return notices
 }
 
-func (source *AjouNormalSource) checkHTML(doc *goquery.Document) error {
-	if source.isInvalidHTML(doc) {
+func (notifier *AjouNormalNotifier) checkHTML(doc *goquery.Document) error {
+	if notifier.isInvalidHTML(doc) {
 		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", "아주대학교-일반공지사항"}, "")
 		return errors.New(errMsg)
 	}
 	return nil
 }
 
-func (source *AjouNormalSource) isInvalidHTML(doc *goquery.Document) bool {
+func (notifier *AjouNormalNotifier) isInvalidHTML(doc *goquery.Document) bool {
 	sel1 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
 	sel2 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
 	if sel1.Nodes == nil || sel2.Nodes == nil ||
@@ -111,56 +111,56 @@ func (source *AjouNormalSource) isInvalidHTML(doc *goquery.Document) bool {
 	return false
 }
 
-func (source *AjouNormalSource) scrapeBoxNotice(doc *goquery.Document) []Notice {
+func (notifier *AjouNormalNotifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 	boxNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
 	boxCount := boxNoticeSels.Length()
 
 	boxNoticeChan := make(chan Notice, boxCount)
 	boxNotices := make([]Notice, 0, boxCount)
-	boxNoticeCount := boxCount - source.BoxCount
+	boxNoticeCount := boxCount - notifier.BoxCount
 
-	if boxCount > source.BoxCount {
+	if boxCount > notifier.BoxCount {
 		boxNoticeSels = boxNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
 			return i < boxNoticeCount
 		})
 
 		boxNoticeSels.Each(func(_ int, boxNotice *goquery.Selection) {
-			go source.getNotice(boxNotice, boxNoticeChan)
+			go notifier.getNotice(boxNotice, boxNoticeChan)
 		})
 
 		for i := 0; i < boxNoticeCount; i++ {
 			boxNotices = append(boxNotices, <-boxNoticeChan)
 		}
 
-		source.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(source.FsDocID).Update(context.Background(), []firestore.Update{
+		notifier.BoxCount = boxCount
+		_, err := Client.Collection("notice").Doc(notifier.FsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
-				Value: source.BoxCount,
+				Value: notifier.BoxCount,
 			},
 		})
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
-		BoxCountMaxNumLogger.Println("boxCount =>", source.BoxCount)
-	} else if boxCount < source.BoxCount {
-		source.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(source.FsDocID).Update(context.Background(), []firestore.Update{
+		BoxCountMaxNumLogger.Println("boxCount =>", notifier.BoxCount)
+	} else if boxCount < notifier.BoxCount {
+		notifier.BoxCount = boxCount
+		_, err := Client.Collection("notice").Doc(notifier.FsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
-				Value: source.BoxCount,
+				Value: notifier.BoxCount,
 			},
 		})
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
-		BoxCountMaxNumLogger.Println("boxCount =>", source.BoxCount)
+		BoxCountMaxNumLogger.Println("boxCount =>", notifier.BoxCount)
 	}
 
 	return boxNotices
 }
 
-func (source *AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []Notice {
+func (notifier *AjouNormalNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	numNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
 	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
@@ -169,40 +169,40 @@ func (source *AjouNormalSource) scrapeNumNotice(doc *goquery.Document) []Notice 
 		ErrorLogger.Panic(err)
 	}
 
-	numNoticeCount := min(maxNum-source.MaxNum, MaxNumNoticeCount)
+	numNoticeCount := min(maxNum-notifier.MaxNum, MaxNumNoticeCount)
 	numNoticeChan := make(chan Notice, numNoticeCount)
 	numNotices := make([]Notice, 0, numNoticeCount)
 
-	if maxNum > source.MaxNum {
+	if maxNum > notifier.MaxNum {
 		numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
 			return i < numNoticeCount
 		})
 
 		numNoticeSels.Each(func(_ int, numNotice *goquery.Selection) {
-			go source.getNotice(numNotice, numNoticeChan)
+			go notifier.getNotice(numNotice, numNoticeChan)
 		})
 
 		for i := 0; i < numNoticeCount; i++ {
 			numNotices = append(numNotices, <-numNoticeChan)
 		}
 
-		source.MaxNum = maxNum
-		_, err = Client.Collection("notice").Doc(source.FsDocID).Update(context.Background(), []firestore.Update{
+		notifier.MaxNum = maxNum
+		_, err = Client.Collection("notice").Doc(notifier.FsDocID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "num",
-				Value: source.MaxNum,
+				Value: notifier.MaxNum,
 			},
 		})
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
-		BoxCountMaxNumLogger.Println("maxNum =>", source.MaxNum)
+		BoxCountMaxNumLogger.Println("maxNum =>", notifier.MaxNum)
 	}
 
 	return numNotices
 }
 
-func (source *AjouNormalSource) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
+func (notifier *AjouNormalNotifier) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
 	id := sel.Find("td:nth-child(1)").Text()
 	id = strings.TrimSpace(id)
 
@@ -217,7 +217,7 @@ func (source *AjouNormalSource) getNotice(sel *goquery.Selection, noticeChan cha
 		return c == '&'
 	})
 	link = strings.Join(split[0:2], "&")
-	link = strings.Join([]string{source.URL, link}, "")
+	link = strings.Join([]string{notifier.URL, link}, "")
 
 	department := sel.Find("td:nth-child(5)").Text()
 
@@ -237,7 +237,7 @@ func (source *AjouNormalSource) getNotice(sel *goquery.Selection, noticeChan cha
 	noticeChan <- notice
 }
 
-func (source *AjouNormalSource) sendNoticeToSlack(notice Notice) {
+func (notifier *AjouNormalNotifier) sendNoticeToSlack(notice Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
 	var footer string
@@ -256,7 +256,7 @@ func (source *AjouNormalSource) sendNoticeToSlack(notice Notice) {
 		FooterIcon: "https://github.com/zzzang12/Notifier/assets/70265177/48fd0fd7-80e2-4309-93da-8a6bc957aacf",
 	}
 
-	_, _, err := api.PostMessage(source.ChannelID, slack.MsgOptionAttachments(attachment))
+	_, _, err := api.PostMessage(notifier.ChannelID, slack.MsgOptionAttachments(attachment))
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}

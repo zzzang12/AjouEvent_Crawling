@@ -19,7 +19,7 @@ type Notice struct {
 	Link       string
 }
 
-type NoticeSource struct {
+type Notifier struct {
 	BoxCount  int
 	MaxNum    int
 	URL       string
