@@ -6,27 +6,6 @@ import (
 	"os"
 )
 
-type Source interface {
-	Notify()
-}
-
-type Notice struct {
-	ID         string
-	Category   string
-	Title      string
-	Department string
-	Date       string
-	Link       string
-}
-
-type Notifier struct {
-	BoxCount  int
-	MaxNum    int
-	URL       string
-	ChannelID string
-	FsDocID   string
-}
-
 const (
 	MaxNumNoticeCount = 10
 	NotifierCount     = 4

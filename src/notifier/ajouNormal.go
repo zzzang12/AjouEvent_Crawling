@@ -13,9 +13,9 @@ import (
 	"strings"
 )
 
-type AjouNormalNotifier Notifier
+type AjouNormalNotifier BaseNotifier
 
-func (AjouNormalNotifier) NewNotifier() *AjouNormalNotifier {
+func (AjouNormalNotifier) New() *AjouNormalNotifier {
 	fsDocID := "ajouNormal"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {

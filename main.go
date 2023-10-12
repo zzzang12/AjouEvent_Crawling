@@ -51,17 +51,17 @@ func main() {
 	noticeTicker := time.NewTicker(10 * time.Second)
 	defer noticeTicker.Stop()
 
-	Notifiers := make([]Source, 0, NotifierCount)
-	Notifiers = append(Notifiers, AjouNormalNotifier{}.NewNotifier())
-	Notifiers = append(Notifiers, AjouScholarshipNotifier{}.NewNotifier())
-	Notifiers = append(Notifiers, AjouSwNotifier{}.NewNotifier())
-	Notifiers = append(Notifiers, AjouSoftwareNotifier{}.NewNotifier())
+	notifiers := make([]Notifier, 0, NotifierCount)
+	notifiers = append(notifiers, CreateNotifier("AjouNormal"))
+	notifiers = append(notifiers, CreateNotifier("AjouScholarship"))
+	notifiers = append(notifiers, CreateNotifier("AjouSw"))
+	notifiers = append(notifiers, CreateNotifier("AjouSoftware"))
 
 	for {
 		select {
 		case <-noticeTicker.C:
 			log.Print("working")
-			for _, notifier := range Notifiers {
+			for _, notifier := range notifiers {
 				go notifier.Notify()
 			}
 		}

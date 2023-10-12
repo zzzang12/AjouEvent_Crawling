@@ -13,9 +13,9 @@ import (
 	"strings"
 )
 
-type AjouScholarshipNotifier Notifier
+type AjouScholarshipNotifier BaseNotifier
 
-func (AjouScholarshipNotifier) NewNotifier() *AjouScholarshipNotifier {
+func (AjouScholarshipNotifier) New() *AjouScholarshipNotifier {
 	fsDocID := "ajouScholarship"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
