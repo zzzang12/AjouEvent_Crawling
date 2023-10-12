@@ -52,10 +52,10 @@ func main() {
 	defer noticeTicker.Stop()
 
 	notifiers := make([]Notifier, 0, NotifierCount)
-	notifiers = append(notifiers, CreateNotifier("AjouNormal"))
-	notifiers = append(notifiers, CreateNotifier("AjouScholarship"))
-	notifiers = append(notifiers, CreateNotifier("AjouSw"))
-	notifiers = append(notifiers, CreateNotifier("AjouSoftware"))
+	notifiers = append(notifiers, AjouNormalNotifier{}.New())
+	notifiers = append(notifiers, AjouScholarshipNotifier{}.New())
+	notifiers = append(notifiers, AjouSwNotifier{}.New())
+	notifiers = append(notifiers, AjouSoftwareNotifier{}.New())
 
 	for {
 		select {
