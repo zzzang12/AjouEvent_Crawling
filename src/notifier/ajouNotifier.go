@@ -14,9 +14,12 @@ type Notice struct {
 }
 
 type BaseNotifier struct {
-	BoxCount  int
-	MaxNum    int
-	URL       string
-	ChannelID string
-	FsDocID   string
+	BoxCount          int
+	MaxNum            int
+	URL               string
+	Source            string
+	ChannelID         string
+	FsDocID           string
+	BoxNoticeSelector string
+	NumNoticeSelector string
 }

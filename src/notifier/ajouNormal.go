@@ -24,11 +24,14 @@ func (AjouNormalNotifier) New() *AjouNormalNotifier {
 	dbData := dsnap.Data()
 
 	return &AjouNormalNotifier{
-		BoxCount:  int(dbData["box"].(int64)),
-		MaxNum:    int(dbData["num"].(int64)),
-		URL:       "https://ajou.ac.kr/kr/ajou/notice.do",
-		ChannelID: "아주대학교-공지사항",
-		FsDocID:   fsDocID,
+		BoxCount:          int(dbData["box"].(int64)),
+		MaxNum:            int(dbData["num"].(int64)),
+		URL:               "https://ajou.ac.kr/kr/ajou/notice.do",
+		Source:            "아주대학교-일반공지사항",
+		ChannelID:         "아주대학교-공지사항",
+		FsDocID:           fsDocID,
+		BoxNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]",
+		NumNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])",
 	}
 }
 
@@ -84,15 +87,15 @@ func (notifier *AjouNormalNotifier) scrapeNotice() []Notice {
 
 func (notifier *AjouNormalNotifier) checkHTML(doc *goquery.Document) error {
 	if notifier.isInvalidHTML(doc) {
-		errMsg := strings.Join([]string{"notifier can't work because HTML structure has changed at ", "아주대학교-일반공지사항"}, "")
+		errMsg := strings.Join([]string{"HTML structure has changed at ", notifier.Source}, "")
 		return errors.New(errMsg)
 	}
 	return nil
 }
 
 func (notifier *AjouNormalNotifier) isInvalidHTML(doc *goquery.Document) bool {
-	sel1 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
-	sel2 := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
+	sel1 := doc.Find(notifier.BoxNoticeSelector)
+	sel2 := doc.Find(notifier.NumNoticeSelector)
 	if sel1.Nodes == nil || sel2.Nodes == nil ||
 		sel1.Find("td:nth-child(1)").Nodes == nil ||
 		sel1.Find("td:nth-child(2)").Nodes == nil ||
@@ -112,7 +115,7 @@ func (notifier *AjouNormalNotifier) isInvalidHTML(doc *goquery.Document) bool {
 }
 
 func (notifier *AjouNormalNotifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
-	boxNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]")
+	boxNoticeSels := doc.Find(notifier.BoxNoticeSelector)
 	boxCount := boxNoticeSels.Length()
 
 	boxNoticeChan := make(chan Notice, boxCount)
@@ -161,7 +164,7 @@ func (notifier *AjouNormalNotifier) scrapeBoxNotice(doc *goquery.Document) []Not
 }
 
 func (notifier *AjouNormalNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
-	numNoticeSels := doc.Find("#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])")
+	numNoticeSels := doc.Find(notifier.NumNoticeSelector)
 	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
 	maxNum, err := strconv.Atoi(maxNumText)
