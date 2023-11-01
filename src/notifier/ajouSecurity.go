@@ -14,27 +14,27 @@ import (
 	"strings"
 )
 
-type AjouMediaNotifier BaseNotifier
+type AjouSecurityNotifier BaseNotifier
 
-func (AjouMediaNotifier) New() *AjouMediaNotifier {
-	fsDocID := "ajouMedia"
+func (AjouSecurityNotifier) New() *AjouSecurityNotifier {
+	fsDocID := "ajouSecurity"
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
 	dbData := dsnap.Data()
 
-	return &AjouMediaNotifier{
+	return &AjouSecurityNotifier{
 		MaxNum:            int(dbData["num"].(int64)),
-		URL:               "https://media.ajou.ac.kr/media/board/board01.jsp",
-		Source:            "[디지털미디어학과]",
-		ChannelID:         "디지털미디어학과-공지사항",
+		URL:               "https://security.ajou.ac.kr/security/board/board01.jsp",
+		Source:            "[사이버보안학과]",
+		ChannelID:         "사이버보안학과-공지사항",
 		FsDocID:           fsDocID,
 		NumNoticeSelector: "#jwxe_main_content > div > div.list_wrap > table > tbody > tr",
 	}
 }
 
-func (notifier *AjouMediaNotifier) Notify() {
+func (notifier *AjouSecurityNotifier) Notify() {
 	defer func() {
 		recover()
 	}()
@@ -46,7 +46,7 @@ func (notifier *AjouMediaNotifier) Notify() {
 	}
 }
 
-func (notifier *AjouMediaNotifier) scrapeNotice() []Notice {
+func (notifier *AjouSecurityNotifier) scrapeNotice() []Notice {
 	resp, err := http.Get(notifier.URL)
 	if err != nil {
 		ErrorLogger.Panic(err)
@@ -80,7 +80,7 @@ func (notifier *AjouMediaNotifier) scrapeNotice() []Notice {
 	return notices
 }
 
-func (notifier *AjouMediaNotifier) checkHTML(doc *goquery.Document) error {
+func (notifier *AjouSecurityNotifier) checkHTML(doc *goquery.Document) error {
 	if notifier.isInvalidHTML(doc) {
 		errMsg := strings.Join([]string{"HTML structure has changed at ", notifier.Source}, "")
 		return errors.New(errMsg)
@@ -88,7 +88,7 @@ func (notifier *AjouMediaNotifier) checkHTML(doc *goquery.Document) error {
 	return nil
 }
 
-func (notifier *AjouMediaNotifier) isInvalidHTML(doc *goquery.Document) bool {
+func (notifier *AjouSecurityNotifier) isInvalidHTML(doc *goquery.Document) bool {
 	sel1 := doc.Find(notifier.NumNoticeSelector)
 	if sel1.Nodes == nil ||
 		sel1.Find("td:nth-child(1)").Nodes == nil ||
@@ -100,7 +100,7 @@ func (notifier *AjouMediaNotifier) isInvalidHTML(doc *goquery.Document) bool {
 	return false
 }
 
-func (notifier *AjouMediaNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
+func (notifier *AjouSecurityNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	numNoticeSels := doc.Find(notifier.NumNoticeSelector)
 	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
@@ -142,7 +142,7 @@ func (notifier *AjouMediaNotifier) scrapeNumNotice(doc *goquery.Document) []Noti
 	return numNotices
 }
 
-func (notifier *AjouMediaNotifier) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
+func (notifier *AjouSecurityNotifier) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
 	id := sel.Find("td:nth-child(1)").Text()
 	id = strings.TrimSpace(id)
 
@@ -176,7 +176,7 @@ func (notifier *AjouMediaNotifier) getNotice(sel *goquery.Selection, noticeChan 
 	noticeChan <- notice
 }
 
-func (notifier *AjouMediaNotifier) sendNoticeToSlack(notice Notice) {
+func (notifier *AjouSecurityNotifier) sendNoticeToSlack(notice Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
 	category := strings.Join([]string{"[", notice.Category, "]"}, "")
