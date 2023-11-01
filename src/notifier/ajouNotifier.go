@@ -20,6 +20,6 @@ type BaseNotifier struct {
 	Source            string
 	ChannelID         string
 	FsDocID           string
-	BoxNoticeSelector string
 	NumNoticeSelector string
+	BoxNoticeSelector string
 }

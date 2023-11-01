@@ -100,12 +100,10 @@ func (notifier *AjouScholarshipNotifier) isInvalidHTML(doc *goquery.Document) bo
 		sel1.Find("td:nth-child(1)").Nodes == nil ||
 		sel1.Find("td:nth-child(2)").Nodes == nil ||
 		sel1.Find("td:nth-child(3) > div > a").Nodes == nil ||
-		sel1.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel1.Find("td:nth-child(5)").Nodes == nil ||
 		sel1.Find("td:nth-child(6)").Nodes == nil ||
 		sel2.Find("td:nth-child(1)").Nodes == nil ||
 		sel2.Find("td:nth-child(2)").Nodes == nil ||
-		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel2.Find("td:nth-child(5)").Nodes == nil ||
 		sel2.Find("td:nth-child(6)").Nodes == nil {

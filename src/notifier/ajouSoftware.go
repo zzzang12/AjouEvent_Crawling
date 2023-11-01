@@ -32,8 +32,8 @@ func (AjouSoftwareNotifier) New() *AjouSoftwareNotifier {
 		Source:            "소프트웨어학과-공지사항",
 		ChannelID:         "소프트웨어학과-공지사항",
 		FsDocID:           fsDocID,
-		BoxNoticeSelector: "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):has(td:first-child > img)",
 		NumNoticeSelector: "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):not(:has(td:first-child > img))",
+		BoxNoticeSelector: "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):has(td:first-child > img)",
 	}
 }
 

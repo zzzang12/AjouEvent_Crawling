@@ -30,8 +30,8 @@ func (AjouSwNotifier) New() *AjouSwNotifier {
 		Source:            "소프트웨어융합대학-공지사항",
 		ChannelID:         "소프트웨어융합대학-공지사항",
 		FsDocID:           fsDocID,
-		BoxNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]",
 		NumNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])",
+		BoxNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]",
 	}
 }
 
@@ -100,12 +100,10 @@ func (notifier *AjouSwNotifier) isInvalidHTML(doc *goquery.Document) bool {
 		sel1.Find("td:nth-child(1)").Nodes == nil ||
 		sel1.Find("td:nth-child(2)").Nodes == nil ||
 		sel1.Find("td:nth-child(3) > div > a").Nodes == nil ||
-		sel1.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel1.Find("td:nth-child(5)").Nodes == nil ||
 		sel1.Find("td:nth-child(6)").Nodes == nil ||
 		sel2.Find("td:nth-child(1)").Nodes == nil ||
 		sel2.Find("td:nth-child(2)").Nodes == nil ||
-		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel2.Find("td:nth-child(3) > div > a").Nodes == nil ||
 		sel2.Find("td:nth-child(5)").Nodes == nil ||
 		sel2.Find("td:nth-child(6)").Nodes == nil {
