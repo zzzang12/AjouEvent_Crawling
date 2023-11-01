@@ -5,6 +5,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/slack-go/slack"
 	"net/http"
@@ -27,7 +28,7 @@ func (AjouNormalNotifier) New() *AjouNormalNotifier {
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		URL:               "https://ajou.ac.kr/kr/ajou/notice.do",
-		Source:            "아주대학교-일반공지사항",
+		Source:            "[아주대학교-일반]",
 		ChannelID:         "아주대학교-공지사항",
 		FsDocID:           fsDocID,
 		NumNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])",
@@ -42,7 +43,9 @@ func (notifier *AjouNormalNotifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		notifier.sendNoticeToSlack(notice)
+		//notifier.sendNoticeToSlack(notice)
+		fmt.Println(notice)
+
 	}
 }
 

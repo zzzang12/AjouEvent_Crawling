@@ -5,6 +5,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/slack-go/slack"
 	"golang.org/x/text/encoding/korean"
@@ -29,7 +30,7 @@ func (AjouSoftwareNotifier) New() *AjouSoftwareNotifier {
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		URL:               "http://software.ajou.ac.kr/bbs/board.php?tbl=notice",
-		Source:            "소프트웨어학과-공지사항",
+		Source:            "[소프트웨어학과]",
 		ChannelID:         "소프트웨어학과-공지사항",
 		FsDocID:           fsDocID,
 		NumNoticeSelector: "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):not(:has(td:first-child > img))",
@@ -44,7 +45,9 @@ func (notifier *AjouSoftwareNotifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		notifier.sendNoticeToSlack(notice)
+		//notifier.sendNoticeToSlack(notice)
+		fmt.Println(notice)
+
 	}
 }
 
@@ -244,7 +247,7 @@ func (notifier *AjouSoftwareNotifier) sendNoticeToSlack(notice Notice) {
 	if notice.ID == "공지" {
 		footer = "[중요]"
 	}
-	footer = strings.Join([]string{footer, "[소프트웨어학과]"}, " ")
+	footer = strings.Join([]string{footer, notifier.Source}, " ")
 
 	attachment := slack.Attachment{
 		Color:      "#0072ce",

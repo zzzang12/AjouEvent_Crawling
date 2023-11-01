@@ -27,7 +27,7 @@ func (AjouMediaNotifier) New() *AjouMediaNotifier {
 	return &AjouMediaNotifier{
 		MaxNum:            int(dbData["num"].(int64)),
 		URL:               "https://media.ajou.ac.kr/media/board/board01.jsp",
-		Source:            "디지털미디어학과-공지사항",
+		Source:            "[디지털미디어학과]",
 		ChannelID:         "디지털미디어학과-공지사항",
 		FsDocID:           fsDocID,
 		NumNoticeSelector: "#jwxe_main_content > div > div.list_wrap > table > tbody > tr",
@@ -41,7 +41,8 @@ func (notifier *AjouMediaNotifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		notifier.sendNoticeToSlack(notice)
+		//notifier.sendNoticeToSlack(notice)
+		fmt.Println(notice)
 	}
 }
 
@@ -174,13 +175,11 @@ func (notifier *AjouMediaNotifier) getNotice(sel *goquery.Selection, noticeChan 
 func (notifier *AjouMediaNotifier) sendNoticeToSlack(notice Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
-	footer := "[디지털미디어학과]"
-
 	attachment := slack.Attachment{
 		Color:      "#0072ce",
 		Title:      strings.Join([]string{notice.Date, notice.Title}, " "),
 		Text:       notice.Link,
-		Footer:     footer,
+		Footer:     notifier.Source,
 		FooterIcon: "https://github.com/zzzang12/Notifier/assets/70265177/48fd0fd7-80e2-4309-93da-8a6bc957aacf",
 	}
 	fmt.Println(attachment)
