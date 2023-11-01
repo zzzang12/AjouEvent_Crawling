@@ -93,6 +93,7 @@ func (notifier *AjouMediaNotifier) isInvalidHTML(doc *goquery.Document) bool {
 	if sel1.Nodes == nil ||
 		sel1.Find("td:nth-child(1)").Nodes == nil ||
 		sel1.Find("td:nth-child(2) > a").Nodes == nil ||
+		sel1.Find("td:nth-child(5)").Nodes == nil ||
 		sel1.Find("td:nth-child(6)").Nodes == nil {
 		return true
 	}
@@ -155,6 +156,9 @@ func (notifier *AjouMediaNotifier) getNotice(sel *goquery.Selection, noticeChan 
 	link = strings.Join(split[0:2], "&")
 	link = strings.Join([]string{notifier.URL, link}, "")
 
+	category := sel.Find("td:nth-child(5)").Text()
+	category = strings.TrimSpace(category)
+
 	date := sel.Find("td:nth-child(6)").Text()
 	date = strings.TrimSpace(date)
 	month := date[5:7]
@@ -167,7 +171,7 @@ func (notifier *AjouMediaNotifier) getNotice(sel *goquery.Selection, noticeChan 
 	}
 	date = strings.Join([]string{month, "월", day, "일"}, "")
 
-	notice := Notice{ID: id, Title: title, Date: date, Link: link}
+	notice := Notice{ID: id, Category: category, Title: title, Date: date, Link: link}
 
 	noticeChan <- notice
 }
@@ -175,14 +179,17 @@ func (notifier *AjouMediaNotifier) getNotice(sel *goquery.Selection, noticeChan 
 func (notifier *AjouMediaNotifier) sendNoticeToSlack(notice Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
+	category := strings.Join([]string{"{", notice.Category, "}"}, "")
+	footer := strings.Join([]string{category, notifier.Source}, " ")
+
 	attachment := slack.Attachment{
 		Color:      "#0072ce",
 		Title:      strings.Join([]string{notice.Date, notice.Title}, " "),
 		Text:       notice.Link,
-		Footer:     notifier.Source,
+		Footer:     footer,
 		FooterIcon: "https://github.com/zzzang12/Notifier/assets/70265177/48fd0fd7-80e2-4309-93da-8a6bc957aacf",
 	}
-	fmt.Println(attachment)
+
 	_, _, err := api.PostMessage(notifier.ChannelID, slack.MsgOptionAttachments(attachment))
 	if err != nil {
 		ErrorLogger.Panic(err)
