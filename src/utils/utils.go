@@ -8,7 +8,7 @@ import (
 
 const (
 	MaxNumNoticeCount = 10
-	NotifierCount     = 4
+	NotifierCount     = 52
 )
 
 var BoxCountMaxNumLogger *log.Logger

@@ -5,7 +5,6 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/slack-go/slack"
 	"net/http"
@@ -27,8 +26,8 @@ func (AjouMobilityNotifier) New() *AjouMobilityNotifier {
 	return &AjouMobilityNotifier{
 		MaxNum:            int(dbData["num"].(int64)),
 		URL:               "https://mobility.ajou.ac.kr/mobility/board/notice.do",
-		Source:            "[AI모빌리티공학과]",
-		ChannelID:         "AI모빌리티공학과-공지사항",
+		Source:            "[ai모빌리티공학과]",
+		ChannelID:         "ai모빌리티공학과-공지사항",
 		FsDocID:           fsDocID,
 		NumNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])",
 	}
@@ -41,9 +40,7 @@ func (notifier *AjouMobilityNotifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		//notifier.sendNoticeToSlack(notice)
-		fmt.Println(notice)
-
+		notifier.sendNoticeToSlack(notice)
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/slack-go/slack"
 	"net/http"
@@ -41,8 +40,7 @@ func (notifier *AjouPhysicsNotifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		//notifier.sendNoticeToSlack(notice)
-		fmt.Println(notice)
+		notifier.sendNoticeToSlack(notice)
 	}
 }
 

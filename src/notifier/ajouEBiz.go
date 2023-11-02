@@ -5,7 +5,6 @@ import (
 	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/slack-go/slack"
 	"net/http"
@@ -28,8 +27,8 @@ func (AjouEBizNotifier) New() *AjouEBizNotifier {
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		URL:               "https://ajou.ac.kr/ebiz/board/notice.do",
-		Source:            "[E비즈니스학과]",
-		ChannelID:         "E비즈니스학과-공지사항",
+		Source:            "[e비즈니스학과]",
+		ChannelID:         "e비즈니스학과-공지사항",
 		FsDocID:           fsDocID,
 		NumNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])",
 		BoxNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]",
@@ -43,9 +42,7 @@ func (notifier *AjouEBizNotifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		//notifier.sendNoticeToSlack(notice)
-		fmt.Println(notice)
-
+		notifier.sendNoticeToSlack(notice)
 	}
 }
 
