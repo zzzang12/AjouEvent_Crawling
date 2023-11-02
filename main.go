@@ -100,7 +100,10 @@ func main() {
 	//notifiers = append(notifiers, AjouEnglishNotifier{}.New())
 	//notifiers = append(notifiers, AjouFrenchNotifier{}.New())
 	//notifiers = append(notifiers, AjouHistoryNotifier{}.New())
-	notifiers = append(notifiers, AjouCultureContentsNotifier{}.New())
+	//notifiers = append(notifiers, AjouCultureContentsNotifier{}.New())
+	//notifiers = append(notifiers, AjouDasanNotifier{}.New())
+	//notifiers = append(notifiers, AjouInternationalNotifier{}.New())
+	notifiers = append(notifiers, AjouGraduateNotifier{}.New())
 
 	for {
 		select {
