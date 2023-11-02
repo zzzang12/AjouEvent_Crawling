@@ -77,7 +77,12 @@ func main() {
 	//notifiers = append(notifiers, AjouTSENotifier{}.New())
 	//notifiers = append(notifiers, AjouArchNotifier{}.New())
 	//notifiers = append(notifiers, AjouISENotifier{}.New())
-	notifiers = append(notifiers, AjouMobilityNotifier{}.New())
+	//notifiers = append(notifiers, AjouMobilityNotifier{}.New())
+	//notifiers = append(notifiers, AjouBizNotifier{}.New())
+	//notifiers = append(notifiers, AjouAbizNotifier{}.New())
+	//notifiers = append(notifiers, AjouEBizNotifier{}.New())
+	//notifiers = append(notifiers, AjouFENotifier{}.New())
+	notifiers = append(notifiers, AjouGBNotifier{}.New())
 
 	for {
 		select {
