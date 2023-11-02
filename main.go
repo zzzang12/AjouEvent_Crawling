@@ -87,7 +87,14 @@ func main() {
 	//notifiers = append(notifiers, AjouMathNotifier{}.New())
 	//notifiers = append(notifiers, AjouPhysicsNotifier{}.New())
 	//notifiers = append(notifiers, AjouChemNotifier{}.New())
-	notifiers = append(notifiers, AjouBiologyNotifier{}.New())
+	//notifiers = append(notifiers, AjouBiologyNotifier{}.New())
+	//notifiers = append(notifiers, AjouCossNotifier{}.New())
+	//notifiers = append(notifiers, AjouEconomicsNotifier{}.New())
+	//notifiers = append(notifiers, AjouPbaNotifier{}.New())
+	//notifiers = append(notifiers, AjouPsychologyNotifier{}.New())
+	//notifiers = append(notifiers, AjouSociologyNotifier{}.New())
+	//notifiers = append(notifiers, AjouPolNotifier{}.New())
+	notifiers = append(notifiers, AjouSportsLeisureNotifier{}.New())
 
 	for {
 		select {
