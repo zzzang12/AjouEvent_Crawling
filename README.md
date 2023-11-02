@@ -18,3 +18,8 @@ git clone
 move serviceAccountKey.json
 
 add SLACK_TOKEN env
+
+### TODO
+- 대학, 학과 이름 변경
+- boxNotice 통일
+- validHTML 확인은 numNotice로만
