@@ -60,6 +60,12 @@ func main() {
 	//notifiers = append(notifiers, AjouAAINotifier{}.New())
 	//notifiers = append(notifiers, AjouSecurityNotifier{}.New())
 	//notifiers = append(notifiers, AjouMDCNotifier{}.New())
+	//notifiers = append(notifiers, AjouPharmacyNotifier{}.New())
+	//notifiers = append(notifiers, AjouMedicineNotifier{}.New())
+	//notifiers = append(notifiers, AjouNursingNotifier{}.New())
+	//notifiers = append(notifiers, AjouECENotifier{}.New())
+	notifiers = append(notifiers, AjouITNotifier{}.New())
+	//notifiers = append(notifiers, AjouAISemiNotifier{}.New())
 
 	for {
 		select {
