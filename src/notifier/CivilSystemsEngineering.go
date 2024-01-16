@@ -26,7 +26,7 @@ func (AjouCENotifier) New() *AjouCENotifier {
 	return &AjouCENotifier{
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
-		URL:               "https://www.ajou.ac.kr/ce/board/notice.do",
+		URL:               "https://ce.ajou.ac.kr/ce/board/freeboard.do",
 		Source:            "[건설시스템공학과]",
 		ChannelID:         "건설시스템공학과-공지사항",
 		FsDocID:           fsDocID,
