@@ -1,7 +1,7 @@
 package notifiers
 
 import (
-	"Notifier/src/models"
+	. "Notifier/models"
 	. "Notifier/src/utils"
 	"cloud.google.com/go/firestore"
 	"context"
@@ -14,9 +14,9 @@ import (
 	"strings"
 )
 
-type Type2Notifier models.BaseNotifier
+type Type2Notifier BaseNotifier
 
-func (Type2Notifier) New(config models.NotifierConfig) *Type2Notifier {
+func (Type2Notifier) New(config NotifierConfig) *Type2Notifier {
 	documentID := config.DocumentID
 	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
 	if err != nil {
@@ -47,7 +47,7 @@ func (notifier *Type2Notifier) Notify() {
 	}
 }
 
-func (notifier *Type2Notifier) scrapeNotice() []models.Notice {
+func (notifier *Type2Notifier) scrapeNotice() []Notice {
 	resp, err := http.Get(notifier.URL)
 	if err != nil {
 		ErrorLogger.Panic(err)
@@ -71,7 +71,7 @@ func (notifier *Type2Notifier) scrapeNotice() []models.Notice {
 
 	numNotices := notifier.scrapeNumNotice(doc)
 
-	notices := make([]models.Notice, 0, len(boxNotices)+len(numNotices))
+	notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
 	for _, notice := range boxNotices {
 		notices = append(notices, notice)
 	}
@@ -113,12 +113,12 @@ func (notifier *Type2Notifier) isInvalidHTML(doc *goquery.Document) bool {
 	return false
 }
 
-func (notifier *Type2Notifier) scrapeBoxNotice(doc *goquery.Document) []models.Notice {
+func (notifier *Type2Notifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 	boxNoticeSels := doc.Find(notifier.BoxNoticeSelector)
 	boxCount := boxNoticeSels.Length()
 
-	boxNoticeChan := make(chan models.Notice, boxCount)
-	boxNotices := make([]models.Notice, 0, boxCount)
+	boxNoticeChan := make(chan Notice, boxCount)
+	boxNotices := make([]Notice, 0, boxCount)
 	boxNoticeCount := boxCount - notifier.BoxCount
 
 	if boxCount > notifier.BoxCount {
@@ -160,7 +160,7 @@ func (notifier *Type2Notifier) scrapeBoxNotice(doc *goquery.Document) []models.N
 	return boxNotices
 }
 
-func (notifier *Type2Notifier) scrapeNumNotice(doc *goquery.Document) []models.Notice {
+func (notifier *Type2Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	numNoticeSels := doc.Find(notifier.NumNoticeSelector)
 	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
@@ -170,8 +170,8 @@ func (notifier *Type2Notifier) scrapeNumNotice(doc *goquery.Document) []models.N
 	}
 
 	numNoticeCount := min(maxNum-notifier.MaxNum, MaxNumNoticeCount)
-	numNoticeChan := make(chan models.Notice, numNoticeCount)
-	numNotices := make([]models.Notice, 0, numNoticeCount)
+	numNoticeChan := make(chan Notice, numNoticeCount)
+	numNotices := make([]Notice, 0, numNoticeCount)
 
 	if maxNum > notifier.MaxNum {
 		numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
@@ -201,7 +201,7 @@ func (notifier *Type2Notifier) scrapeNumNotice(doc *goquery.Document) []models.N
 	return numNotices
 }
 
-func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan models.Notice) {
+func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
 	id := sel.Find("td:nth-child(1)").Text()
 	id = strings.TrimSpace(id)
 
@@ -231,12 +231,12 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	}
 	date = strings.Join([]string{month, "월", day, "일"}, "")
 
-	notice := models.Notice{ID: id, Category: category, Title: title, Department: department, Date: date, Link: link}
+	notice := Notice{ID: id, Category: category, Title: title, Department: department, Date: date, Link: link}
 
 	noticeChan <- notice
 }
 
-func (notifier *Type2Notifier) sendNoticeToSlack(notice models.Notice) {
+func (notifier *Type2Notifier) sendNoticeToSlack(notice Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
 	var footer string
