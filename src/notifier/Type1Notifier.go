@@ -137,7 +137,6 @@ func (notifier *Type1Notifier) scrapeNumNotice(doc *goquery.Document) []models.N
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
-		BoxCountMaxNumLogger.Println("maxNum =>", notifier.MaxNum)
 	}
 
 	return numNotices

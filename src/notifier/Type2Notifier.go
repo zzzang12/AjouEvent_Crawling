@@ -144,7 +144,6 @@ func (notifier *Type2Notifier) scrapeBoxNotice(doc *goquery.Document) []models.N
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
-		BoxCountMaxNumLogger.Println("boxCount =>", notifier.BoxCount)
 	} else if boxCount < notifier.BoxCount {
 		notifier.BoxCount = boxCount
 		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
@@ -156,7 +155,6 @@ func (notifier *Type2Notifier) scrapeBoxNotice(doc *goquery.Document) []models.N
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
-		BoxCountMaxNumLogger.Println("boxCount =>", notifier.BoxCount)
 	}
 
 	return boxNotices
@@ -198,7 +196,6 @@ func (notifier *Type2Notifier) scrapeNumNotice(doc *goquery.Document) []models.N
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
-		BoxCountMaxNumLogger.Println("maxNum =>", notifier.MaxNum)
 	}
 
 	return numNotices

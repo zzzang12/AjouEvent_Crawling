@@ -21,19 +21,12 @@ func main() {
 	}
 	defer errorLog.Close()
 
-	boxCountMaxNumLog, err := os.OpenFile("logs/boxCountMaxNumLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer boxCountMaxNumLog.Close()
-
 	sentNoticeLog, err := os.OpenFile("logs/sentNoticeLog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer sentNoticeLog.Close()
 
-	BoxCountMaxNumLogger = log.New(boxCountMaxNumLog, "", log.Ldate|log.Ltime|log.Lshortfile)
 	ErrorLogger = log.New(errorLog, "", log.Ldate|log.Ltime|log.Lshortfile)
 	SentNoticeLogger = log.New(sentNoticeLog, "", log.Ldate|log.Ltime|log.Lshortfile)
 
