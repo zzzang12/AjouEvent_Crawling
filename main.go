@@ -1,8 +1,7 @@
 package main
 
 import (
-	. "Notifier/src/notifier"
-	//. "Notifier/src/notifier"
+	. "Notifier/src/notifiers"
 	. "Notifier/src/utils"
 	"context"
 	firebase "firebase.google.com/go"
