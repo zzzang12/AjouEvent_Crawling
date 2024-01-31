@@ -1,6 +1,7 @@
 package notifier
 
 import (
+	"Notifier/src/models"
 	. "Notifier/src/utils"
 	"cloud.google.com/go/firestore"
 	"context"
@@ -13,27 +14,29 @@ import (
 	"strings"
 )
 
-type AjouPharmacyNotifier BaseNotifier
+type Type4Notifier models.BaseNotifier
 
-func (AjouPharmacyNotifier) New() *AjouPharmacyNotifier {
-	fsDocID := "Pharmacy"
+func (Type4Notifier) New(config models.NotifierConfig) *Type4Notifier {
+	fsDocID := config.FsDocID
 	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
 	dbData := dsnap.Data()
 
-	return &AjouPharmacyNotifier{
-		MaxNum:            int(dbData["num"].(int64)),
-		URL:               "https://pharm.ajou.ac.kr/pharm/board/notice.do",
-		Source:            "[약학대학]",
-		ChannelID:         "약학대학-공지사항",
+	return &Type4Notifier{
+		URL:               config.URL,
+		Source:            config.Source,
+		ChannelID:         config.ChannelID,
 		FsDocID:           fsDocID,
-		NumNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr",
+		BoxCount:          int(dbData["box"].(int64)),
+		MaxNum:            int(dbData["num"].(int64)),
+		BoxNoticeSelector: "#nil",
+		NumNoticeSelector: "#contents > article > section > div > div:nth-child(3) > div.tb_w > table > tbody > tr",
 	}
 }
 
-func (notifier *AjouPharmacyNotifier) Notify() {
+func (notifier *Type4Notifier) Notify() {
 	defer func() {
 		recover()
 	}()
@@ -44,7 +47,7 @@ func (notifier *AjouPharmacyNotifier) Notify() {
 	}
 }
 
-func (notifier *AjouPharmacyNotifier) scrapeNotice() []Notice {
+func (notifier *Type4Notifier) scrapeNotice() []models.Notice {
 	resp, err := http.Get(notifier.URL)
 	if err != nil {
 		ErrorLogger.Panic(err)
@@ -66,7 +69,7 @@ func (notifier *AjouPharmacyNotifier) scrapeNotice() []Notice {
 
 	numNotices := notifier.scrapeNumNotice(doc)
 
-	notices := make([]Notice, 0, len(numNotices))
+	notices := make([]models.Notice, 0, len(numNotices))
 	for _, notice := range numNotices {
 		notices = append(notices, notice)
 	}
@@ -78,7 +81,7 @@ func (notifier *AjouPharmacyNotifier) scrapeNotice() []Notice {
 	return notices
 }
 
-func (notifier *AjouPharmacyNotifier) checkHTML(doc *goquery.Document) error {
+func (notifier *Type4Notifier) checkHTML(doc *goquery.Document) error {
 	if notifier.isInvalidHTML(doc) {
 		errMsg := strings.Join([]string{"HTML structure has changed at ", notifier.Source}, "")
 		return errors.New(errMsg)
@@ -86,19 +89,20 @@ func (notifier *AjouPharmacyNotifier) checkHTML(doc *goquery.Document) error {
 	return nil
 }
 
-func (notifier *AjouPharmacyNotifier) isInvalidHTML(doc *goquery.Document) bool {
+func (notifier *Type4Notifier) isInvalidHTML(doc *goquery.Document) bool {
 	sel1 := doc.Find(notifier.NumNoticeSelector)
 	if sel1.Nodes == nil ||
 		sel1.Find("td:nth-child(1)").Nodes == nil ||
 		sel1.Find("td:nth-child(2)").Nodes == nil ||
-		sel1.Find("td:nth-child(3) > div > a").Nodes == nil ||
-		sel1.Find("td:nth-child(6)").Nodes == nil {
+		sel1.Find("td:nth-child(3) > a").Nodes == nil ||
+		sel1.Find("td:nth-child(3) > a > span").Nodes == nil ||
+		sel1.Find("td:nth-child(4)").Nodes == nil {
 		return true
 	}
 	return false
 }
 
-func (notifier *AjouPharmacyNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
+func (notifier *Type4Notifier) scrapeNumNotice(doc *goquery.Document) []models.Notice {
 	numNoticeSels := doc.Find(notifier.NumNoticeSelector)
 	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
@@ -108,8 +112,8 @@ func (notifier *AjouPharmacyNotifier) scrapeNumNotice(doc *goquery.Document) []N
 	}
 
 	numNoticeCount := min(maxNum-notifier.MaxNum, MaxNumNoticeCount)
-	numNoticeChan := make(chan Notice, numNoticeCount)
-	numNotices := make([]Notice, 0, numNoticeCount)
+	numNoticeChan := make(chan models.Notice, numNoticeCount)
+	numNotices := make([]models.Notice, 0, numNoticeCount)
 
 	if maxNum > notifier.MaxNum {
 		numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
@@ -140,24 +144,23 @@ func (notifier *AjouPharmacyNotifier) scrapeNumNotice(doc *goquery.Document) []N
 	return numNotices
 }
 
-func (notifier *AjouPharmacyNotifier) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
+func (notifier *Type4Notifier) getNotice(sel *goquery.Selection, noticeChan chan models.Notice) {
 	id := sel.Find("td:nth-child(1)").Text()
 	id = strings.TrimSpace(id)
 
 	category := sel.Find("td:nth-child(2)").Text()
 	category = strings.TrimSpace(category)
 
-	title, _ := sel.Find("td:nth-child(3) > div > a").Attr("title")
-	title = title[:len(title)-17]
-
-	link, _ := sel.Find("td:nth-child(3) > div > a").Attr("href")
+	link, _ := sel.Find("td:nth-child(3) > a").Attr("href")
 	split := strings.FieldsFunc(link, func(c rune) bool {
-		return c == '&'
+		return c == ' '
 	})
-	link = strings.Join(split[0:2], "&")
-	link = strings.Join([]string{notifier.URL, link}, "")
+	link = split[5:6][0]
+	link = strings.Join([]string{notifier.URL[:len(notifier.URL)-7], "View.do?no=", link}, "")
 
-	date := sel.Find("td:nth-child(6)").Text()
+	title := sel.Find("td:nth-child(3) > a > span").Text()
+
+	date := sel.Find("td:nth-child(4)").Text()
 	month := date[5:7]
 	if month[0] == '0' {
 		month = month[1:]
@@ -168,12 +171,12 @@ func (notifier *AjouPharmacyNotifier) getNotice(sel *goquery.Selection, noticeCh
 	}
 	date = strings.Join([]string{month, "월", day, "일"}, "")
 
-	notice := Notice{ID: id, Category: category, Title: title, Date: date, Link: link}
+	notice := models.Notice{ID: id, Category: category, Title: title, Date: date, Link: link}
 
 	noticeChan <- notice
 }
 
-func (notifier *AjouPharmacyNotifier) sendNoticeToSlack(notice Notice) {
+func (notifier *Type4Notifier) sendNoticeToSlack(notice models.Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
 	category := strings.Join([]string{"[", notice.Category, "]"}, "")

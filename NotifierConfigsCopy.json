@@ -1,0 +1,366 @@
+[
+  {
+    "fsDocID": "AIMobilityEngineering",
+    "url": "https://mobility.ajou.ac.kr/mobility/board/notice.do",
+    "source": "[ai모빌리티공학과]",
+    "channelID": "ai모빌리티공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "AjouNormal",
+    "url": "https://ajou.ac.kr/kr/ajou/notice.do",
+    "source": "[아주대학교-일반]",
+    "channelID": "아주대학교-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "AjouScholarship",
+    "url": "https://ajou.ac.kr/kr/ajou/notice_scholarship.do",
+    "source": "[아주대학교-장학]",
+    "channelID": "아주대학교-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "AppliedArtificialIntelligence",
+    "url": "https://aai.ajou.ac.kr/aai/academics/notice.jsp",
+    "source": "[인공지능융합학과]",
+    "channelID": "인공지능융합학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "AppliedChemistryBiologicalEngineering",
+    "url": "https://chembio.ajou.ac.kr/chembio/board/board01.jsp",
+    "source": "[응용화학생명공학과]",
+    "channelID": "응용화학생명공학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "Architecture",
+    "url": "https://arch.ajou.ac.kr/arch/board/board01.jsp",
+    "source": "[건축학과]",
+    "channelID": "건축학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "BiologicalScience",
+    "url": "https://biology.ajou.ac.kr/biolog/board/board01.jsp",
+    "source": "[생명과학과]",
+    "channelID": "생명과학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "Business",
+    "url": "https://biz.ajou.ac.kr/biz/community/notice.do",
+    "source": "[경영대학]",
+    "channelID": "경영대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "BusinessAdministration",
+    "url": "https://abiz.ajou.ac.kr/abiz/board/notice.do",
+    "source": "[경영학과]",
+    "channelID": "경영학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "ChemicalEngineering",
+    "url": "https://che.ajou.ac.kr/che/board/notice.do",
+    "source": "[화학공학과]",
+    "channelID": "화학공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "Chemistry",
+    "url": "https://chem.ajou.ac.kr/chem/board/notice.do",
+    "source": "[화학과]",
+    "channelID": "화학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "CivilSystemsEngineering",
+    "url": "https://ce.ajou.ac.kr/ce/board/freeboard.do",
+    "source": "[건설시스템공학과]",
+    "channelID": "건설시스템공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "ComputingInformatics",
+    "url": "https://sw.ajou.ac.kr/sw/board/notice.do",
+    "source": "[소프트웨어융합대학]",
+    "channelID": "소프트웨어융합대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "CultureContents",
+    "url": "https://culture.ajou.ac.kr/culture/board/board01.jsp",
+    "source": "[문화콘텐츠학과]",
+    "channelID": "문화콘텐츠학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "CyberSecurity",
+    "url": "https://security.ajou.ac.kr/security/board/board01.jsp",
+    "source": "[사이버보안학과]",
+    "channelID": "사이버보안학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "Dasan",
+    "url": "https://uc.ajou.ac.kr/uc/comunity/cnotice.do",
+    "source": "[다산학부대학]",
+    "channelID": "다산학부대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "DigitalMedia",
+    "url": "https://media.ajou.ac.kr/media/board/board01.jsp",
+    "source": "[디지털미디어학과]",
+    "channelID": "디지털미디어학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "EBusiness",
+    "url": "https://ebiz.ajou.ac.kr/ebiz/board/notice.do",
+    "source": "[e비즈니스학과]",
+    "channelID": "e비즈니스학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "Economics",
+    "url": "https://econ.ajou.ac.kr/econ/community/community03.jsp",
+    "source": "[경제학과]",
+    "channelID": "경제학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "ElectricalComputerEngineering",
+    "url": "https://ece.ajou.ac.kr/ece/bachelor/notice.do",
+    "source": "[전자공학과]",
+    "channelID": "전자공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "Engineering",
+    "url": "https://eng.ajou.ac.kr/eng/community/notice.do",
+    "source": "[공과대학]",
+    "channelID": "공과대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "EnglishLanguageLiterature",
+    "url": "https://ell.ajou.ac.kr/english/board/board01.jsp",
+    "source": "[영어영문학과]",
+    "channelID": "영어영문학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "EnvironmentalSafetyEngineering",
+    "url": "https://env.ajou.ac.kr/env/board/notice.do",
+    "source": "[환경안전공학과]",
+    "channelID": "환경안전공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "FinancialEngineering",
+    "url": "https://fe.ajou.ac.kr/fe/notice/notice.do",
+    "source": "[금융공학과]",
+    "channelID": "금융공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "FrenchLanguageLiterature",
+    "url": "https://france.ajou.ac.kr/france/board/board01.jsp",
+    "source": "[불어불문학과]",
+    "channelID": "불어불문학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "GlobalBusiness",
+    "url": "https://gb.ajou.ac.kr/gb/admission/alram.do",
+    "source": "[글로벌경영학과]",
+    "channelID": "글로벌경영학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "Graduate",
+    "url": "https://grad.ajou.ac.kr/gs/community/notice.do",
+    "source": "[대학원]",
+    "channelID": "대학원-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "History",
+    "url": "https://history.ajou.ac.kr/history/board/board01.jsp",
+    "source": "[사학과]",
+    "channelID": "사학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "Humanities",
+    "url": "https://human.ajou.ac.kr/human/community/community01.do",
+    "source": "[인문대학]",
+    "channelID": "인문대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "IndustrialEngineering",
+    "url": "https://ie.ajou.ac.kr/ie/academic/notice.do",
+    "source": "[산업공학과]",
+    "channelID": "산업공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "InformationTechnology",
+    "url": "https://it.ajou.ac.kr/it/board/notice.do",
+    "source": "[정보통신대학]",
+    "channelID": "정보통신대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "IntegrativeSystemsEngineering",
+    "url": "https://ise.ajou.ac.kr/ise/board/notice.jsp",
+    "source": "[융합시스템공학과]",
+    "channelID": "융합시스템공학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "IntelligenceSemiconductorEngineering",
+    "url": "https://aisemi.ajou.ac.kr/aisemi/board/notice.do",
+    "source": "[지능형반도체공학과]",
+    "channelID": "지능형반도체공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "International",
+    "url": "https://isa.ajou.ac.kr/isa/support/notice.do",
+    "source": "[국제학부대학]",
+    "channelID": "국제학부대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "KoreanLanguageLiterature",
+    "url": "https://kor.ajou.ac.kr/kor/board/board01.jsp",
+    "source": "[국어국문학과]",
+    "channelID": "국어국문학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "MaterialsScienceEngineering",
+    "url": "https://mse.ajou.ac.kr/mse/board/notice.do",
+    "source": "[첨단신소재공학과]",
+    "channelID": "첨단신소재공학과-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "Mathmatics",
+    "url": "https://math.ajou.ac.kr/math/board/board01.jsp",
+    "source": "[수학과]",
+    "channelID": "수학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "MechanicalEngineering",
+    "url": "https://me.ajou.ac.kr/me/board/board01.jsp",
+    "source": "[기계공학과]",
+    "channelID": "기계공학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "Medicine",
+    "url": "https://www.ajoumc.or.kr/medicine/board/commBoardUVNoticeList.do",
+    "source": "[의과대학]",
+    "channelID": "의과대학-공지사항",
+    "type": 4
+  },
+  {
+    "fsDocID": "MilitaryDigitalConvergence",
+    "url": "https://mdc.ajou.ac.kr/mdc/board/board01.jsp",
+    "source": "[국방디지털융합학과]",
+    "channelID": "국방디지털융합학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "NaturalScience",
+    "url": "https://ns.ajou.ac.kr/ns/board/notice.do",
+    "source": "[자연과학대학]",
+    "channelID": "자연과학대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "Nursing",
+    "url": "https://www.ajoumc.or.kr/nursing/board/commBoardNRNewsList.do",
+    "source": "[간호대학]",
+    "channelID": "간호대학-공지사항",
+    "type": 4
+  },
+  {
+    "fsDocID": "Pharmacy",
+    "url": "https://pharm.ajou.ac.kr/pharm/board/notice.do",
+    "source": "[약학대학]",
+    "channelID": "약학대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "Physics",
+    "url": "https://physics.ajou.ac.kr/physics/board/board01.jsp",
+    "source": "[물리학과]",
+    "channelID": "물리학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "PoliticalScienceDiplomacy",
+    "url": "https://pol.ajou.ac.kr/pol/community/community04.jsp",
+    "source": "[정치외교학과]",
+    "channelID": "정치외교학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "Psychology",
+    "url": "https://apsy.ajou.ac.kr/apsy/community/community04.jsp",
+    "source": "[심리학과]",
+    "channelID": "심리학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "PublicAdministration",
+    "url": "https://pba.ajou.ac.kr/pba/community/community03.jsp",
+    "source": "[행정학과]",
+    "channelID": "행정학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "SocialScience",
+    "url": "https://coss.ajou.ac.kr/coss/community/community01.do",
+    "source": "[사회과학대학]",
+    "channelID": "사회과학대학-공지사항",
+    "type": 2
+  },
+  {
+    "fsDocID": "Sociology",
+    "url": "https://soci.ajou.ac.kr/soci/community/community03.jsp",
+    "source": "[사회학과]",
+    "channelID": "사회학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "Software",
+    "url": "http://software.ajou.ac.kr/bbs/board.php?tbl=notice",
+    "source": "[소프트웨어학과]",
+    "channelID": "소프트웨어학과-공지사항",
+    "type": 3
+  },
+  {
+    "fsDocID": "SportsLeisureStudies",
+    "url": "https://slez.ajou.ac.kr/slez/community/community03.jsp",
+    "source": "[스포츠레저학과]",
+    "channelID": "스포츠레저학과-공지사항",
+    "type": 1
+  },
+  {
+    "fsDocID": "TransportationSystemsEngineering",
+    "url": "https://tse.ajou.ac.kr/tse/board/board03.do",
+    "source": "[교통시스템공학과]",
+    "channelID": "교통시스템공학과-공지사항",
+    "type": 2
+  }
+]
