@@ -17,8 +17,8 @@ import (
 type Type1Notifier models.BaseNotifier
 
 func (Type1Notifier) New(config models.NotifierConfig) *Type1Notifier {
-	fsDocID := config.FsDocID
-	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
+	documentID := config.DocumentID
+	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
@@ -28,7 +28,7 @@ func (Type1Notifier) New(config models.NotifierConfig) *Type1Notifier {
 		URL:               config.URL,
 		Source:            config.Source,
 		ChannelID:         config.ChannelID,
-		FsDocID:           fsDocID,
+		DocumentID:        documentID,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		BoxNoticeSelector: "#nil",
@@ -128,7 +128,7 @@ func (notifier *Type1Notifier) scrapeNumNotice(doc *goquery.Document) []models.N
 		}
 
 		notifier.MaxNum = maxNum
-		_, err = Client.Collection("notice").Doc(notifier.FsDocID).Update(context.Background(), []firestore.Update{
+		_, err = Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "num",
 				Value: notifier.MaxNum,

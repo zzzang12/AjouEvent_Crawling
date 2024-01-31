@@ -1,9 +1,9 @@
 package models
 
 type NotifierConfig struct {
-	FsDocID   string `json:"fsDocID"`
-	URL       string `json:"url"`
-	Source    string `json:"source"`
-	ChannelID string `json:"channelId"`
-	Type      int    `json:"type"`
+	DocumentID string `json:"documentID"`
+	URL        string `json:"url"`
+	Source     string `json:"source"`
+	ChannelID  string `json:"channelID"`
+	Type       int    `json:"type"`
 }

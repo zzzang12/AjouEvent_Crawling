@@ -6,7 +6,7 @@ type BaseNotifier struct {
 	URL               string
 	Source            string
 	ChannelID         string
-	FsDocID           string
+	DocumentID        string
 	NumNoticeSelector string
 	BoxNoticeSelector string
 }

@@ -19,8 +19,8 @@ import (
 type Type3Notifier models.BaseNotifier
 
 func (Type3Notifier) New(config models.NotifierConfig) *Type3Notifier {
-	fsDocID := config.FsDocID
-	dsnap, err := Client.Collection("notice").Doc(fsDocID).Get(context.Background())
+	documentID := config.DocumentID
+	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
@@ -30,7 +30,7 @@ func (Type3Notifier) New(config models.NotifierConfig) *Type3Notifier {
 		URL:               config.URL,
 		Source:            config.Source,
 		ChannelID:         config.ChannelID,
-		FsDocID:           fsDocID,
+		DocumentID:        documentID,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		BoxNoticeSelector: "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):has(td:first-child > img)",
@@ -133,7 +133,7 @@ func (notifier *Type3Notifier) scrapeBoxNotice(doc *goquery.Document) []models.N
 		}
 
 		notifier.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(notifier.FsDocID).Update(context.Background(), []firestore.Update{
+		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
 				Value: notifier.BoxCount,
@@ -145,7 +145,7 @@ func (notifier *Type3Notifier) scrapeBoxNotice(doc *goquery.Document) []models.N
 		BoxCountMaxNumLogger.Println("boxCount =>", notifier.BoxCount)
 	} else if boxCount < notifier.BoxCount {
 		notifier.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(notifier.FsDocID).Update(context.Background(), []firestore.Update{
+		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
 				Value: notifier.BoxCount,
@@ -187,7 +187,7 @@ func (notifier *Type3Notifier) scrapeNumNotice(doc *goquery.Document) []models.N
 		}
 
 		notifier.MaxNum = maxNum
-		_, err = Client.Collection("notice").Doc(notifier.FsDocID).Update(context.Background(), []firestore.Update{
+		_, err = Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "num",
 				Value: notifier.MaxNum,
