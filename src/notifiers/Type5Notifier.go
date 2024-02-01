@@ -14,9 +14,9 @@ import (
 	"strings"
 )
 
-type Type2Notifier BaseNotifier
+type Type5Notifier BaseNotifier
 
-func (Type2Notifier) New(config NotifierConfig) *Type2Notifier {
+func (Type5Notifier) New(config NotifierConfig) *Type5Notifier {
 	documentID := config.DocumentID
 	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
 	if err != nil {
@@ -24,19 +24,19 @@ func (Type2Notifier) New(config NotifierConfig) *Type2Notifier {
 	}
 	dbData := dsnap.Data()
 
-	return &Type2Notifier{
+	return &Type5Notifier{
 		URL:               config.URL,
 		Source:            config.Source,
 		ChannelID:         config.ChannelID,
 		DocumentID:        documentID,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
-		BoxNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]",
-		NumNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])",
+		BoxNoticeSelector: "#nil",
+		NumNoticeSelector: "#contents > article > section > div > div.tb_w > table > tbody > tr",
 	}
 }
 
-func (notifier *Type2Notifier) Notify() {
+func (notifier *Type5Notifier) Notify() {
 	defer func() {
 		recover()
 	}()
@@ -47,7 +47,7 @@ func (notifier *Type2Notifier) Notify() {
 	}
 }
 
-func (notifier *Type2Notifier) scrapeNotice() []Notice {
+func (notifier *Type5Notifier) scrapeNotice() []Notice {
 	resp, err := http.Get(notifier.URL)
 	if err != nil {
 		ErrorLogger.Panic(err)
@@ -67,14 +67,9 @@ func (notifier *Type2Notifier) scrapeNotice() []Notice {
 		ErrorLogger.Panic(err)
 	}
 
-	boxNotices := notifier.scrapeBoxNotice(doc)
-
 	numNotices := notifier.scrapeNumNotice(doc)
 
-	notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
-	for _, notice := range boxNotices {
-		notices = append(notices, notice)
-	}
+	notices := make([]Notice, 0, len(numNotices))
 	for _, notice := range numNotices {
 		notices = append(notices, notice)
 	}
@@ -86,7 +81,7 @@ func (notifier *Type2Notifier) scrapeNotice() []Notice {
 	return notices
 }
 
-func (notifier *Type2Notifier) checkHTML(doc *goquery.Document) error {
+func (notifier *Type5Notifier) checkHTML(doc *goquery.Document) error {
 	if notifier.isInvalidHTML(doc) {
 		errMsg := strings.Join([]string{"HTML structure has changed at ", notifier.Source}, "")
 		return errors.New(errMsg)
@@ -94,67 +89,20 @@ func (notifier *Type2Notifier) checkHTML(doc *goquery.Document) error {
 	return nil
 }
 
-func (notifier *Type2Notifier) isInvalidHTML(doc *goquery.Document) bool {
-	sel := doc.Find(notifier.NumNoticeSelector)
-	if sel.Nodes == nil ||
-		sel.Find("td:nth-child(1)").Nodes == nil ||
-		sel.Find("td:nth-child(2)").Nodes == nil ||
-		sel.Find("td:nth-child(3) > div > a").Nodes == nil ||
-		sel.Find("td:nth-child(5)").Nodes == nil ||
-		sel.Find("td:nth-child(6)").Nodes == nil {
+func (notifier *Type5Notifier) isInvalidHTML(doc *goquery.Document) bool {
+	sel1 := doc.Find(notifier.NumNoticeSelector)
+	if sel1.Nodes == nil ||
+		sel1.Find("td:nth-child(1)").Nodes == nil ||
+		sel1.Find("td:nth-child(2)").Nodes == nil ||
+		sel1.Find("td:nth-child(3) > a").Nodes == nil ||
+		sel1.Find("td:nth-child(3) > a > span").Nodes == nil ||
+		sel1.Find("td:nth-child(6)").Nodes == nil {
 		return true
 	}
 	return false
 }
 
-func (notifier *Type2Notifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
-	boxNoticeSels := doc.Find(notifier.BoxNoticeSelector)
-	boxCount := boxNoticeSels.Length()
-
-	boxNoticeChan := make(chan Notice, boxCount)
-	boxNotices := make([]Notice, 0, boxCount)
-	boxNoticeCount := boxCount - notifier.BoxCount
-
-	if boxCount > notifier.BoxCount {
-		boxNoticeSels = boxNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
-			return i < boxNoticeCount
-		})
-
-		boxNoticeSels.Each(func(_ int, boxNotice *goquery.Selection) {
-			go notifier.getNotice(boxNotice, boxNoticeChan)
-		})
-
-		for i := 0; i < boxNoticeCount; i++ {
-			boxNotices = append(boxNotices, <-boxNoticeChan)
-		}
-
-		notifier.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
-			{
-				Path:  "box",
-				Value: notifier.BoxCount,
-			},
-		})
-		if err != nil {
-			ErrorLogger.Panic(err)
-		}
-	} else if boxCount < notifier.BoxCount {
-		notifier.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
-			{
-				Path:  "box",
-				Value: notifier.BoxCount,
-			},
-		})
-		if err != nil {
-			ErrorLogger.Panic(err)
-		}
-	}
-
-	return boxNotices
-}
-
-func (notifier *Type2Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
+func (notifier *Type5Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	numNoticeSels := doc.Find(notifier.NumNoticeSelector)
 	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
 	maxNumText = strings.TrimSpace(maxNumText)
@@ -195,24 +143,21 @@ func (notifier *Type2Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	return numNotices
 }
 
-func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
+func (notifier *Type5Notifier) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
 	id := sel.Find("td:nth-child(1)").Text()
 	id = strings.TrimSpace(id)
 
 	category := sel.Find("td:nth-child(2)").Text()
 	category = strings.TrimSpace(category)
 
-	title, _ := sel.Find("td:nth-child(3) > div > a").Attr("title")
-	title = title[:len(title)-17]
-
-	link, _ := sel.Find("td:nth-child(3) > div > a").Attr("href")
+	link, _ := sel.Find("td:nth-child(3) > a").Attr("href")
 	split := strings.FieldsFunc(link, func(c rune) bool {
-		return c == '&'
+		return c == ' '
 	})
-	link = strings.Join(split[0:2], "&")
-	link = strings.Join([]string{notifier.URL, link}, "")
+	link = split[5:6][0]
+	link = strings.Join([]string{notifier.URL[:len(notifier.URL)-7], "View.do?no=", link}, "")
 
-	department := sel.Find("td:nth-child(5)").Text()
+	title := sel.Find("td:nth-child(3) > a > span").Text()
 
 	date := sel.Find("td:nth-child(6)").Text()
 	month := date[5:7]
@@ -225,21 +170,16 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	}
 	date = strings.Join([]string{month, "월", day, "일"}, "")
 
-	notice := Notice{ID: id, Category: category, Title: title, Department: department, Date: date, Link: link}
+	notice := Notice{ID: id, Category: category, Title: title, Date: date, Link: link}
 
 	noticeChan <- notice
 }
 
-func (notifier *Type2Notifier) sendNoticeToSlack(notice Notice) {
+func (notifier *Type5Notifier) sendNoticeToSlack(notice Notice) {
 	api := slack.New(os.Getenv("SLACK_TOKEN"))
 
-	var footer string
-	if notice.ID == "공지" {
-		footer = "[중요]"
-	}
 	category := strings.Join([]string{"[", notice.Category, "]"}, "")
-	department := strings.Join([]string{"[", notice.Department, "]"}, "")
-	footer = strings.Join([]string{footer, category, department}, " ")
+	footer := strings.Join([]string{notifier.Source, category}, " ")
 
 	attachment := slack.Attachment{
 		Color:      "#0072ce",

@@ -90,12 +90,12 @@ func (notifier *Type1Notifier) checkHTML(doc *goquery.Document) error {
 }
 
 func (notifier *Type1Notifier) isInvalidHTML(doc *goquery.Document) bool {
-	sel1 := doc.Find(notifier.NumNoticeSelector)
-	if sel1.Nodes == nil ||
-		sel1.Find("td:nth-child(1)").Nodes == nil ||
-		sel1.Find("td:nth-child(2) > a").Nodes == nil ||
-		sel1.Find("td:nth-child(5)").Nodes == nil ||
-		sel1.Find("td:nth-child(6)").Nodes == nil {
+	sel := doc.Find(notifier.NumNoticeSelector)
+	if sel.Nodes == nil ||
+		sel.Find("td:nth-child(1)").Nodes == nil ||
+		sel.Find("td:nth-child(2) > a").Nodes == nil ||
+		sel.Find("td:nth-child(5)").Nodes == nil ||
+		sel.Find("td:nth-child(6)").Nodes == nil {
 		return true
 	}
 	return false
