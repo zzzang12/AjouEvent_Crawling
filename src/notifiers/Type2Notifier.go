@@ -26,8 +26,8 @@ func (Type2Notifier) New(config NotifierConfig) *Type2Notifier {
 		DocumentID:        config.DocumentID,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
-		BoxNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]",
-		NumNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr:not([class$=\"b-top-box\"])",
+		BoxNoticeSelector: "#cms-content > div > div > div.type01 > table > tbody > tr[class$=\"b-top-box\"]",
+		NumNoticeSelector: "#cms-content > div > div > div.type01 > table > tbody > tr:not([class$=\"b-top-box\"])",
 	}
 }
 
