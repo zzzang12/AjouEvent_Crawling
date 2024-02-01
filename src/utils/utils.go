@@ -48,15 +48,15 @@ func ConnectFirebase() *firestore.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-	Client, err = app.Firestore(context.Background())
+	client, err := app.Firestore(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
-	return Client
+	return client
 }
 
-func LoadConfig(fileAddress string) []NotifierConfig {
-	file, err := os.Open(fileAddress)
+func LoadConfig(path string) []NotifierConfig {
+	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
