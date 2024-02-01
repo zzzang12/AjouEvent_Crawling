@@ -54,7 +54,7 @@ func (notifier *Type3Notifier) scrapeNotice() []Notice {
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		ErrorLogger.Panicf("status code error: %s", resp.Status)
 	}
 	defer resp.Body.Close()

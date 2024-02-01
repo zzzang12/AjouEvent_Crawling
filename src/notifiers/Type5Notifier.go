@@ -52,7 +52,7 @@ func (notifier *Type5Notifier) scrapeNotice() []Notice {
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		ErrorLogger.Panicf("status code error: %s", resp.Status)
 	}
 	defer resp.Body.Close()
@@ -67,9 +67,14 @@ func (notifier *Type5Notifier) scrapeNotice() []Notice {
 		ErrorLogger.Panic(err)
 	}
 
+	boxNotices := notifier.scrapeBoxNotice(doc)
+
 	numNotices := notifier.scrapeNumNotice(doc)
 
 	notices := make([]Notice, 0, len(numNotices))
+	for _, notice := range boxNotices {
+		notices = append(notices, notice)
+	}
 	for _, notice := range numNotices {
 		notices = append(notices, notice)
 	}
@@ -100,6 +105,53 @@ func (notifier *Type5Notifier) isInvalidHTML(doc *goquery.Document) bool {
 		return true
 	}
 	return false
+}
+
+func (notifier *Type5Notifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
+	boxNoticeSels := doc.Find(notifier.BoxNoticeSelector)
+	boxCount := boxNoticeSels.Length()
+
+	boxNoticeChan := make(chan Notice, boxCount)
+	boxNotices := make([]Notice, 0, boxCount)
+	boxNoticeCount := boxCount - notifier.BoxCount
+
+	if boxCount > notifier.BoxCount {
+		boxNoticeSels = boxNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
+			return i < boxNoticeCount
+		})
+
+		boxNoticeSels.Each(func(_ int, boxNotice *goquery.Selection) {
+			go notifier.getNotice(boxNotice, boxNoticeChan)
+		})
+
+		for i := 0; i < boxNoticeCount; i++ {
+			boxNotices = append(boxNotices, <-boxNoticeChan)
+		}
+
+		notifier.BoxCount = boxCount
+		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
+			{
+				Path:  "box",
+				Value: notifier.BoxCount,
+			},
+		})
+		if err != nil {
+			ErrorLogger.Panic(err)
+		}
+	} else if boxCount < notifier.BoxCount {
+		notifier.BoxCount = boxCount
+		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
+			{
+				Path:  "box",
+				Value: notifier.BoxCount,
+			},
+		})
+		if err != nil {
+			ErrorLogger.Panic(err)
+		}
+	}
+
+	return boxNotices
 }
 
 func (notifier *Type5Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
