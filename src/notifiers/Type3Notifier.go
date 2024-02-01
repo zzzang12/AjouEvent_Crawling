@@ -19,18 +19,13 @@ import (
 type Type3Notifier BaseNotifier
 
 func (Type3Notifier) New(config NotifierConfig) *Type3Notifier {
-	documentID := config.DocumentID
-	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
-	if err != nil {
-		ErrorLogger.Panic(err)
-	}
-	dbData := dsnap.Data()
+	dbData := LoadDbData(config.DocumentID)
 
 	return &Type3Notifier{
 		URL:               config.URL,
 		Source:            config.Source,
 		ChannelID:         config.ChannelID,
-		DocumentID:        documentID,
+		DocumentID:        config.DocumentID,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		BoxNoticeSelector: "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):has(td:first-child > img)",
@@ -163,7 +158,7 @@ func (notifier *Type3Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 		ErrorLogger.Panic(err)
 	}
 
-	numNoticeCount := min(maxNum-notifier.MaxNum, numNoticeSels.Length())
+	numNoticeCount := min(maxNum-notifier.MaxNum, MaxNumNoticeCount)
 	numNoticeChan := make(chan Notice, numNoticeCount)
 	numNotices := make([]Notice, 0, numNoticeCount)
 

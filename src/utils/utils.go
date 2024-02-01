@@ -71,3 +71,12 @@ func LoadConfig(path string) []NotifierConfig {
 
 	return configs
 }
+
+func LoadDbData(documentID string) map[string]interface{} {
+	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
+	dbData := dsnap.Data()
+	return dbData
+}

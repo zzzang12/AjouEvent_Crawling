@@ -17,18 +17,13 @@ import (
 type Type1Notifier BaseNotifier
 
 func (Type1Notifier) New(config NotifierConfig) *Type1Notifier {
-	documentID := config.DocumentID
-	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
-	if err != nil {
-		ErrorLogger.Panic(err)
-	}
-	dbData := dsnap.Data()
+	dbData := LoadDbData(config.DocumentID)
 
 	return &Type1Notifier{
 		URL:               config.URL,
 		Source:            config.Source,
 		ChannelID:         config.ChannelID,
-		DocumentID:        documentID,
+		DocumentID:        config.DocumentID,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		BoxNoticeSelector: "#nil",
@@ -71,7 +66,7 @@ func (notifier *Type1Notifier) scrapeNotice() []Notice {
 
 	numNotices := notifier.scrapeNumNotice(doc)
 
-	notices := make([]Notice, 0, len(numNotices))
+	notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
 	for _, notice := range boxNotices {
 		notices = append(notices, notice)
 	}

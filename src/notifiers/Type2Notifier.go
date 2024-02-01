@@ -17,18 +17,13 @@ import (
 type Type2Notifier BaseNotifier
 
 func (Type2Notifier) New(config NotifierConfig) *Type2Notifier {
-	documentID := config.DocumentID
-	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
-	if err != nil {
-		ErrorLogger.Panic(err)
-	}
-	dbData := dsnap.Data()
+	dbData := LoadDbData(config.DocumentID)
 
 	return &Type2Notifier{
 		URL:               config.URL,
 		Source:            config.Source,
 		ChannelID:         config.ChannelID,
-		DocumentID:        documentID,
+		DocumentID:        config.DocumentID,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		BoxNoticeSelector: "#cms-content > div > div > div.bn-list-common02.type01.bn-common-cate > table > tbody > tr[class$=\"b-top-box\"]",

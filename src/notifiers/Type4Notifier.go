@@ -17,21 +17,17 @@ import (
 type Type4Notifier BaseNotifier
 
 func (Type4Notifier) New(config NotifierConfig) *Type4Notifier {
-	documentID := config.DocumentID
-	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
-	if err != nil {
-		ErrorLogger.Panic(err)
-	}
-	dbData := dsnap.Data()
+	dbData := LoadDbData(config.DocumentID)
 
 	return &Type4Notifier{
 		URL:               config.URL,
 		Source:            config.Source,
 		ChannelID:         config.ChannelID,
-		DocumentID:        documentID,
+		DocumentID:        config.DocumentID,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		BoxNoticeSelector: "#nil",
+		//BoxNoticeSelector: "#contents > article > section > div > div:nth-child(3) > div.cnt_in.x_divi_w > ul > li > div",
 		NumNoticeSelector: "#contents > article > section > div > div:nth-child(3) > div.tb_w > table > tbody > tr",
 	}
 }
@@ -71,7 +67,7 @@ func (notifier *Type4Notifier) scrapeNotice() []Notice {
 
 	numNotices := notifier.scrapeNumNotice(doc)
 
-	notices := make([]Notice, 0, len(numNotices))
+	notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
 	for _, notice := range boxNotices {
 		notices = append(notices, notice)
 	}
@@ -206,7 +202,7 @@ func (notifier *Type4Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	split := strings.FieldsFunc(link, func(c rune) bool {
 		return c == ' '
 	})
-	link = split[5:6][0]
+	link = split[5]
 	link = strings.Join([]string{notifier.URL[:len(notifier.URL)-7], "View.do?no=", link}, "")
 
 	title := sel.Find("td:nth-child(3) > a > span").Text()
