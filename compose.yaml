@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  notifier:
+    image: wadevs12/notifier
+    container_name: notifier
+    environment:
+      SLACK_TOKEN: "xoxb-5303119303253-5501909655088-X3kPmJcEim7VJIZ72ngpL7gs"
+    ports:
+    - "8888:8888"
+    volumes:
+      - /Users/zzang12/Workspace/repository/Notifier/logs:/workspace/logs
+    restart: always

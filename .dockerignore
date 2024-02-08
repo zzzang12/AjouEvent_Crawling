@@ -1,0 +1,9 @@
+.dockerignore
+.git
+.gitignore
+.idea
+Dockerfile
+README.md
+assets
+logs
+*.iml
