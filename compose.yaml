@@ -5,7 +5,7 @@ services:
     image: wadevs12/notifier
     container_name: notifier
     environment:
-      SLACK_TOKEN: "xoxb-5303119303253-5501909655088-X3kPmJcEim7VJIZ72ngpL7gs"
+      SLACK_TOKEN: "SLACK_TOKEN"
     ports:
     - "8888:8888"
     volumes:
