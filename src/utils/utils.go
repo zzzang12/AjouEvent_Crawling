@@ -1,14 +1,15 @@
 package utils
 
 import (
-	. "Notifier/models"
-	"cloud.google.com/go/firestore"
 	"context"
 	"encoding/json"
-	firebase "firebase.google.com/go"
-	"google.golang.org/api/option"
 	"log"
 	"os"
+
+	. "Notifier/models"
+	"cloud.google.com/go/firestore"
+	firebase "firebase.google.com/go"
+	"google.golang.org/api/option"
 )
 
 const (
@@ -55,7 +56,7 @@ func ConnectFirebase() *firestore.Client {
 	return client
 }
 
-func LoadConfig(path string) []NotifierConfig {
+func LoadNotifierConfig(path string) []NotifierConfig {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)

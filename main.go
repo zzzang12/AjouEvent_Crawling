@@ -1,10 +1,11 @@
 package main
 
 import (
-	. "Notifier/src/notifiers"
-	. "Notifier/src/utils"
 	"log"
 	"time"
+
+	. "Notifier/src/notifiers"
+	. "Notifier/src/utils"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	Client = ConnectFirebase()
 	defer Client.Close()
 
-	notifierConfigs := LoadConfig("notifierConfigs.json")
+	notifierConfigs := LoadNotifierConfig("notifierConfigs.json")
 
 	notifiers := make([]Notifier, 0, len(notifierConfigs))
 	for _, notifierConfig := range notifierConfigs {
