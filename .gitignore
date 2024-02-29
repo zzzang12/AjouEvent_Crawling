@@ -4,3 +4,4 @@ logs
 serviceAccountKey.json
 tmp
 *.iml
+.air.toml
