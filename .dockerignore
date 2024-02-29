@@ -1,9 +1,12 @@
+.DS_Store
+.air.toml
 .dockerignore
 .git
 .gitignore
 .idea
 Dockerfile
 README.md
+compose.yaml
 logs
 tmp
 *.iml
