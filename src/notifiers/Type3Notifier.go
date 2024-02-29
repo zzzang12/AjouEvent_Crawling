@@ -1,19 +1,20 @@
 package notifiers
 
 import (
-	. "Notifier/models"
-	. "Notifier/src/utils"
-	"cloud.google.com/go/firestore"
 	"context"
 	"errors"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/slack-go/slack"
-	"golang.org/x/text/encoding/korean"
-	"golang.org/x/text/transform"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+
+	. "Notifier/models"
+	. "Notifier/src/utils"
+	"cloud.google.com/go/firestore"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/slack-go/slack"
+	"golang.org/x/text/encoding/korean"
+	"golang.org/x/text/transform"
 )
 
 type Type3Notifier BaseNotifier
@@ -158,7 +159,9 @@ func (notifier *Type3Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 		ErrorLogger.Panic(err)
 	}
 
-	numNoticeCount := min(maxNum-notifier.MaxNum, MaxNumNoticeCount)
+	boxNoticeSels := doc.Find(notifier.BoxNoticeSelector)
+	boxCount := boxNoticeSels.Length()
+	numNoticeCount := min(maxNum-notifier.MaxNum, 15-boxCount)
 	numNoticeChan := make(chan Notice, numNoticeCount)
 	numNotices := make([]Notice, 0, numNoticeCount)
 
