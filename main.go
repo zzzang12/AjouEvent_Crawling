@@ -22,7 +22,7 @@ func main() {
 	Client = ConnectFirebase()
 	defer Client.Close()
 
-	notifierConfigs := LoadNotifierConfig("notifierConfigs.json")
+	notifierConfigs := LoadNotifierConfig("config/notifierConfigs.json")
 
 	notifiers := make([]Notifier, 0, len(notifierConfigs))
 	for _, notifierConfig := range notifierConfigs {

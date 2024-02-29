@@ -3,6 +3,8 @@ version: "3.8"
 services:
   notifier:
     image: wadevs12/notifier
+    build:
+      context: .
     container_name: notifier
     environment:
       SLACK_TOKEN: "SLACK_TOKEN"
