@@ -9,5 +9,5 @@ services:
     ports:
     - "8888:8888"
     volumes:
-      - /Users/zzang12/Workspace/repository/Notifier/logs:/workspace/logs
+      - ./logs:/workspace/logs
     restart: always
