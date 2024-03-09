@@ -10,14 +10,14 @@
     "documentID": "AjouNormal",
     "url": "https://ajou.ac.kr/kr/ajou/notice.do",
     "source": "[아주대학교-일반]",
-    "channelID": "아주대학교-공지사항",
+    "channelID": "아주대학교-일반-공지사항",
     "type": 2
   },
   {
     "documentID": "AjouScholarship",
     "url": "https://ajou.ac.kr/kr/ajou/notice_scholarship.do",
     "source": "[아주대학교-장학]",
-    "channelID": "아주대학교-공지사항",
+    "channelID": "아주대학교-장학-공지사항",
     "type": 2
   },
   {
