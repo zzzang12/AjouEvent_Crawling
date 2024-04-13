@@ -1,20 +1,17 @@
 package utils
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"log"
+	"net/http"
 	"os"
 
 	. "Notifier/models"
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
 	"google.golang.org/api/option"
-)
-
-const (
-	MaxNumNoticeCount = 10
-	CrawlingPeriod    = 10
 )
 
 var ErrorLogger *log.Logger
@@ -80,4 +77,30 @@ func LoadDbData(documentID string) map[string]interface{} {
 	}
 	dbData := dsnap.Data()
 	return dbData
+}
+
+func LoadEnv() map[string]string {
+	env := make(map[string]string)
+	env["CRAWLING_PERIOD"] = os.Getenv("CRAWLING_PERIOD")
+	return env
+}
+
+func SendCrawlingWebhook(url string, payload any) {
+	payloadJson, err := json.Marshal(payload)
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
+	buff := bytes.NewBuffer(payloadJson)
+
+	req, err := http.NewRequest(http.MethodPost, url, buff)
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
+	req.Header.Add("Content-Type", "application/json")
+
+	client := &http.Client{}
+	_, err = client.Do(req)
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strconv"
 	"time"
 
 	. "Notifier/src/notifiers"
@@ -21,6 +22,8 @@ func main() {
 
 	Client = ConnectFirebase()
 	defer Client.Close()
+
+	env := LoadEnv()
 
 	notifierConfigs := LoadNotifierConfig("config/notifierConfigs.json")
 
@@ -42,7 +45,11 @@ func main() {
 		notifiers = append(notifiers, notifier)
 	}
 
-	noticeTicker := time.NewTicker(CrawlingPeriod * time.Second)
+	crawlingPeriod, err := strconv.Atoi(env["CRAWLING_PERIOD"])
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
+	noticeTicker := time.NewTicker(time.Duration(crawlingPeriod) * time.Second)
 	defer noticeTicker.Stop()
 
 	for {
