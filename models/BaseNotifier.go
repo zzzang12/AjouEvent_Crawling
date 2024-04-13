@@ -1,12 +1,11 @@
 package models
 
 type BaseNotifier struct {
+	BaseUrl           string
+	EnglishTopic      string
+	KoreanTopic       string
 	BoxCount          int
 	MaxNum            int
-	URL               string
-	Source            string
-	ChannelID         string
-	DocumentID        string
-	NumNoticeSelector string
 	BoxNoticeSelector string
+	NumNoticeSelector string
 }

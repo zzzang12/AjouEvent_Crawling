@@ -1,29 +1,28 @@
 package notifiers
 
 import (
+	"context"
+	"errors"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	. "Notifier/models"
 	. "Notifier/src/utils"
 	"cloud.google.com/go/firestore"
-	"context"
-	"errors"
 	"github.com/PuerkitoBio/goquery"
-	"github.com/slack-go/slack"
-	"net/http"
-	"os"
-	"strconv"
-	"strings"
 )
 
 type Type1Notifier BaseNotifier
 
 func (Type1Notifier) New(config NotifierConfig) *Type1Notifier {
-	dbData := LoadDbData(config.DocumentID)
+	dbData := LoadDbData(config.EnglishTopic)
 
 	return &Type1Notifier{
-		URL:               config.URL,
-		Source:            config.Source,
-		ChannelID:         config.ChannelID,
-		DocumentID:        config.DocumentID,
+		BaseUrl:           config.BaseUrl,
+		EnglishTopic:      config.EnglishTopic,
+		KoreanTopic:       config.KoreanTopic,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
 		BoxNoticeSelector: "#nil",
@@ -38,12 +37,12 @@ func (notifier *Type1Notifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		notifier.sendNoticeToSlack(notice)
+		SendCrawlingWebhook("", notice)
 	}
 }
 
 func (notifier *Type1Notifier) scrapeNotice() []Notice {
-	resp, err := http.Get(notifier.URL)
+	resp, err := http.Get(notifier.BaseUrl)
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
@@ -83,7 +82,7 @@ func (notifier *Type1Notifier) scrapeNotice() []Notice {
 
 func (notifier *Type1Notifier) checkHTML(doc *goquery.Document) error {
 	if notifier.isInvalidHTML(doc) {
-		errMsg := strings.Join([]string{"HTML structure has changed at ", notifier.Source}, "")
+		errMsg := strings.Join([]string{"HTML structure has changed at ", notifier.KoreanTopic}, "")
 		return errors.New(errMsg)
 	}
 	return nil
@@ -123,7 +122,7 @@ func (notifier *Type1Notifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 		}
 
 		notifier.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
+		_, err := Client.Collection("notice").Doc(notifier.EnglishTopic).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
 				Value: notifier.BoxCount,
@@ -134,7 +133,7 @@ func (notifier *Type1Notifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 		}
 	} else if boxCount < notifier.BoxCount {
 		notifier.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
+		_, err := Client.Collection("notice").Doc(notifier.EnglishTopic).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "box",
 				Value: notifier.BoxCount,
@@ -157,7 +156,7 @@ func (notifier *Type1Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 		ErrorLogger.Panic(err)
 	}
 
-	numNoticeCount := min(maxNum-notifier.MaxNum, MaxNumNoticeCount)
+	numNoticeCount := min(maxNum-notifier.MaxNum, 10)
 	numNoticeChan := make(chan Notice, numNoticeCount)
 	numNotices := make([]Notice, 0, numNoticeCount)
 
@@ -175,7 +174,7 @@ func (notifier *Type1Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 		}
 
 		notifier.MaxNum = maxNum
-		_, err = Client.Collection("notice").Doc(notifier.DocumentID).Update(context.Background(), []firestore.Update{
+		_, err = Client.Collection("notice").Doc(notifier.EnglishTopic).Update(context.Background(), []firestore.Update{
 			{
 				Path:  "num",
 				Value: notifier.MaxNum,
@@ -196,49 +195,28 @@ func (notifier *Type1Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	title := sel.Find("td:nth-child(2) > a").Text()
 	title = strings.TrimSpace(title)
 
-	link, _ := sel.Find("td:nth-child(2) > a").Attr("href")
-	split := strings.FieldsFunc(link, func(c rune) bool {
+	url, _ := sel.Find("td:nth-child(2) > a").Attr("href")
+	split := strings.FieldsFunc(url, func(c rune) bool {
 		return c == '&'
 	})
-	link = strings.Join(split[0:2], "&")
-	link = strings.Join([]string{notifier.URL, link}, "")
+	url = strings.Join(split[0:2], "&")
+	url = strings.Join([]string{notifier.BaseUrl, url}, "")
 
 	category := sel.Find("td:nth-child(5)").Text()
 	category = strings.TrimSpace(category)
 
-	date := sel.Find("td:nth-child(6)").Text()
-	date = strings.TrimSpace(date)
-	month := date[5:7]
-	if month[0] == '0' {
-		month = month[1:]
-	}
-	day := date[8:10]
-	if day[0] == '0' {
-		day = day[1:]
-	}
-	date = strings.Join([]string{month, "월", day, "일"}, "")
+	date := time.Now().Format(time.RFC3339)
+	date = date[:len(date)-6]
 
-	notice := Notice{ID: id, Category: category, Title: title, Date: date, Link: link}
+	notice := Notice{
+		ID:           id,
+		Category:     category,
+		Title:        title,
+		Date:         date,
+		Url:          url,
+		EnglishTopic: notifier.EnglishTopic,
+		KoreanTopic:  notifier.KoreanTopic,
+	}
 
 	noticeChan <- notice
-}
-
-func (notifier *Type1Notifier) sendNoticeToSlack(notice Notice) {
-	api := slack.New(os.Getenv("SLACK_TOKEN"))
-
-	category := strings.Join([]string{"[", notice.Category, "]"}, "")
-	footer := strings.Join([]string{category, notifier.Source}, " ")
-
-	attachment := slack.Attachment{
-		Color:      "#0072ce",
-		Title:      strings.Join([]string{notice.Date, notice.Title}, " "),
-		Text:       notice.Link,
-		Footer:     footer,
-		FooterIcon: "https://github.com/zzzang12/Notifier/assets/70265177/48fd0fd7-80e2-4309-93da-8a6bc957aacf",
-	}
-
-	_, _, err := api.PostMessage(notifier.ChannelID, slack.MsgOptionAttachments(attachment))
-	if err != nil {
-		ErrorLogger.Panic(err)
-	}
 }
