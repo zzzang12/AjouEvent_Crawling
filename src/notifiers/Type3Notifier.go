@@ -12,8 +12,6 @@ import (
 	. "Notifier/src/utils"
 	"cloud.google.com/go/firestore"
 	"github.com/PuerkitoBio/goquery"
-	"golang.org/x/text/encoding/korean"
-	"golang.org/x/text/transform"
 )
 
 type Type3Notifier BaseNotifier
@@ -27,8 +25,8 @@ func (Type3Notifier) New(config NotifierConfig) *Type3Notifier {
 		KoreanTopic:       config.KoreanTopic,
 		BoxCount:          int(dbData["box"].(int64)),
 		MaxNum:            int(dbData["num"].(int64)),
-		BoxNoticeSelector: "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):has(td:first-child > img)",
-		NumNoticeSelector: "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):not(:has(td:first-child > img))",
+		BoxNoticeSelector: "#nil",
+		NumNoticeSelector: "#contents > article > section > div > div:nth-child(3) > div.tb_w > table > tbody > tr",
 	}
 }
 
@@ -94,8 +92,10 @@ func (notifier *Type3Notifier) isInvalidHTML(doc *goquery.Document) bool {
 	sel := doc.Find(notifier.NumNoticeSelector)
 	if sel.Nodes == nil ||
 		sel.Find("td:nth-child(1)").Nodes == nil ||
+		sel.Find("td:nth-child(2)").Nodes == nil ||
 		sel.Find("td:nth-child(3) > a").Nodes == nil ||
-		sel.Find("td:nth-child(3) > p:first-of-type").Nodes == nil {
+		sel.Find("td:nth-child(3) > a > span").Nodes == nil ||
+		sel.Find("td:nth-child(4)").Nodes == nil {
 		return true
 	}
 	return false
@@ -157,9 +157,7 @@ func (notifier *Type3Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 		ErrorLogger.Panic(err)
 	}
 
-	boxNoticeSels := doc.Find(notifier.BoxNoticeSelector)
-	boxCount := boxNoticeSels.Length()
-	numNoticeCount := min(maxNum-notifier.MaxNum, 15-boxCount)
+	numNoticeCount := min(maxNum-notifier.MaxNum, 10)
 	numNoticeChan := make(chan Notice, numNoticeCount)
 	numNotices := make([]Notice, 0, numNoticeCount)
 
@@ -192,30 +190,27 @@ func (notifier *Type3Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 }
 
 func (notifier *Type3Notifier) getNotice(sel *goquery.Selection, noticeChan chan Notice) {
-	var id string
-	if sel.Find("td:nth-child(1):has(img)").Nodes != nil {
-		id = "공지"
-	} else {
-		id = sel.Find("td:nth-child(1)").Text()
-		id = strings.TrimSpace(id)
-	}
+	id := sel.Find("td:nth-child(1)").Text()
+	id = strings.TrimSpace(id)
 
-	title := sel.Find("td:nth-child(3) > a").Text()
-	title = strings.TrimSpace(title)
-	title, _, _ = transform.String(korean.EUCKR.NewDecoder(), title)
+	category := sel.Find("td:nth-child(2)").Text()
+	category = strings.TrimSpace(category)
 
 	url, _ := sel.Find("td:nth-child(3) > a").Attr("href")
 	split := strings.FieldsFunc(url, func(c rune) bool {
-		return c == '&'
+		return c == ' '
 	})
-	url = strings.Join(split[1:3], "&")
-	url = strings.Join([]string{notifier.BaseUrl, url}, "&")
+	url = split[5]
+	url = strings.Join([]string{notifier.BaseUrl[:len(notifier.BaseUrl)-7], "View.do?no=", url}, "")
+
+	title := sel.Find("td:nth-child(3) > a > span").Text()
 
 	date := time.Now().Format(time.RFC3339)
 	date = date[:len(date)-6]
 
 	notice := Notice{
 		ID:           id,
+		Category:     category,
 		Title:        title,
 		Date:         date,
 		Url:          url,

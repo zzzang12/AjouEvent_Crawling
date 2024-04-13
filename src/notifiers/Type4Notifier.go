@@ -20,14 +20,13 @@ func (Type4Notifier) New(config NotifierConfig) *Type4Notifier {
 	dbData := LoadDbData(config.EnglishTopic)
 
 	return &Type4Notifier{
-		BaseUrl:      config.BaseUrl,
-		EnglishTopic: config.EnglishTopic,
-		KoreanTopic:  config.KoreanTopic,
-		BoxCount:     int(dbData["box"].(int64)),
-		MaxNum:       int(dbData["num"].(int64)),
-		//BoxNoticeSelector: "#contents > article > section > div > div:nth-child(3) > div.cnt_in.x_divi_w > ul > li > div",
-		BoxNoticeSelector: "",
-		NumNoticeSelector: "#contents > article > section > div > div:nth-child(3) > div.tb_w > table > tbody > tr",
+		BaseUrl:           config.BaseUrl,
+		EnglishTopic:      config.EnglishTopic,
+		KoreanTopic:       config.KoreanTopic,
+		BoxCount:          int(dbData["box"].(int64)),
+		MaxNum:            int(dbData["num"].(int64)),
+		BoxNoticeSelector: "#nil",
+		NumNoticeSelector: "#contents > article > section > div > div.tb_w > table > tbody > tr",
 	}
 }
 
@@ -96,7 +95,7 @@ func (notifier *Type4Notifier) isInvalidHTML(doc *goquery.Document) bool {
 		sel.Find("td:nth-child(2)").Nodes == nil ||
 		sel.Find("td:nth-child(3) > a").Nodes == nil ||
 		sel.Find("td:nth-child(3) > a > span").Nodes == nil ||
-		sel.Find("td:nth-child(4)").Nodes == nil {
+		sel.Find("td:nth-child(6)").Nodes == nil {
 		return true
 	}
 	return false
