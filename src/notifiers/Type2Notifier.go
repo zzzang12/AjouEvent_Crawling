@@ -84,7 +84,7 @@ func (notifier *Type2Notifier) scrapeNotice() []Notice {
 
 func (notifier *Type2Notifier) checkHTML(doc *goquery.Document) error {
 	if notifier.isInvalidHTML(doc) {
-		errMsg := strings.Join([]string{"HTML structure has changed at ", notifier.KoreanTopic}, "")
+		errMsg := "HTML structure has changed at " + notifier.KoreanTopic
 		return errors.New(errMsg)
 	}
 	return nil
@@ -208,8 +208,7 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	split := strings.FieldsFunc(url, func(c rune) bool {
 		return c == '&'
 	})
-	url = strings.Join(split[1:3], "&")
-	url = strings.Join([]string{notifier.BaseUrl, url}, "&")
+	url = notifier.BaseUrl + "&" + strings.Join(split[1:3], "&")
 
 	date := time.Now().Format(time.RFC3339)
 	date = date[:len(date)-6]
