@@ -2,12 +2,12 @@ version: "3.8"
 
 services:
   notifier:
-    image: wadevs12/notifier
+    image: notifier
     build:
       context: .
     container_name: notifier
     environment:
-      SLACK_TOKEN: "SLACK_TOKEN"
+      CRAWLING_PERIOD: 10
     ports:
     - "8888:8888"
     volumes:
