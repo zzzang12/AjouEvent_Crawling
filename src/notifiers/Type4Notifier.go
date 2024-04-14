@@ -94,8 +94,7 @@ func (notifier *Type4Notifier) isInvalidHTML(doc *goquery.Document) bool {
 		sel.Find("td:nth-child(1)").Nodes == nil ||
 		sel.Find("td:nth-child(2)").Nodes == nil ||
 		sel.Find("td:nth-child(3) > a").Nodes == nil ||
-		sel.Find("td:nth-child(3) > a > span").Nodes == nil ||
-		sel.Find("td:nth-child(6)").Nodes == nil {
+		sel.Find("td:nth-child(3) > a > span").Nodes == nil {
 		return true
 	}
 	return false
