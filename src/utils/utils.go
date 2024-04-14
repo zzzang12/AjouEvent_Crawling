@@ -92,14 +92,7 @@ func SendCrawlingWebhook(url string, payload any) {
 	}
 	buff := bytes.NewBuffer(payloadJson)
 
-	req, err := http.NewRequest(http.MethodPost, url, buff)
-	if err != nil {
-		ErrorLogger.Panic(err)
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	client := &http.Client{}
-	_, err = client.Do(req)
+	_, err = http.Post(url, "application/json", buff)
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
