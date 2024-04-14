@@ -69,7 +69,7 @@
     "type": 1,
     "englishTopic": "CivilSystemsEngineering",
     "koreanTopic": "건설시스템공학과",
-    "baseUrl": "https://ce.ajou.ac.kr/ce/board/freeboard.do"
+    "baseUrl": "https://ce.ajou.ac.kr/ce/board/notice.do"
   },
   {
     "type": 1,
@@ -84,7 +84,7 @@
     "baseUrl": "https://culture.ajou.ac.kr/culture/academic/notice.do"
   },
   {
-    "type": 1,
+    "type": 5,
     "englishTopic": "CyberSecurity",
     "koreanTopic": "사이버보안학과",
     "baseUrl": "https://security.ajou.ac.kr/security/board/under-notice.do"
@@ -186,7 +186,7 @@
     "baseUrl": "https://it.ajou.ac.kr/it/board/notice.do"
   },
   {
-    "type": 1,
+    "type": 5,
     "englishTopic": "IntegrativeSystemsEngineering",
     "koreanTopic": "융합시스템공학과",
     "baseUrl": "https://ise.ajou.ac.kr/ise/board/notice.do"

@@ -39,6 +39,8 @@ func main() {
 			notifier = Type3Notifier{}.New(notifierConfig)
 		case 4:
 			notifier = Type4Notifier{}.New(notifierConfig)
+		case 5:
+			notifier = Type5Notifier{}.New(notifierConfig)
 		}
 		notifiers = append(notifiers, notifier)
 	}
