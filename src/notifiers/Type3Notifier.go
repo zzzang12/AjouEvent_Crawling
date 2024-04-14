@@ -37,7 +37,7 @@ func (notifier *Type3Notifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		SendCrawlingWebhook("", notice)
+		SendCrawlingWebhook("https://ajou-event.shop/api/webhook/crawling", notice)
 	}
 }
 
