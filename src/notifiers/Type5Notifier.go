@@ -155,7 +155,8 @@ func (notifier *Type5Notifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 		ErrorLogger.Panic(err)
 	}
 
-	numNoticeCount := min(maxNum-notifier.MaxNum, 10)
+	numNoticeCountReference := GetNumNoticeCountReference(doc, notifier.EnglishTopic, notifier.BoxNoticeSelector)
+	numNoticeCount := min(maxNum-notifier.MaxNum, numNoticeCountReference)
 	numNoticeChan := make(chan Notice, numNoticeCount)
 	numNotices := make([]Notice, 0, numNoticeCount)
 

@@ -12,6 +12,7 @@ import (
 	. "Notifier/models"
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
+	"github.com/PuerkitoBio/goquery"
 	"google.golang.org/api/option"
 )
 
@@ -99,4 +100,13 @@ func SendCrawlingWebhook(url string, payload any) {
 		ErrorLogger.Panic(err)
 	}
 	PostLogger.Println(string(body))
+}
+
+func GetNumNoticeCountReference(doc *goquery.Document, englishTopic, boxNoticeSelector string) int {
+	if englishTopic != "Software" {
+		return 10
+	}
+	boxNoticeSels := doc.Find(boxNoticeSelector)
+	boxCount := boxNoticeSels.Length()
+	return 15 - boxCount
 }
