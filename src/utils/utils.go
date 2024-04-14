@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -16,6 +17,7 @@ import (
 
 var ErrorLogger *log.Logger
 var SentNoticeLogger *log.Logger
+var PostLogger *log.Logger
 var Client *firestore.Client
 
 func CreateDir(path string) {
@@ -79,12 +81,6 @@ func LoadDbData(documentID string) map[string]interface{} {
 	return dbData
 }
 
-func LoadEnv() map[string]string {
-	env := make(map[string]string)
-	env["CRAWLING_PERIOD"] = os.Getenv("CRAWLING_PERIOD")
-	return env
-}
-
 func SendCrawlingWebhook(url string, payload any) {
 	payloadJson, err := json.Marshal(payload)
 	if err != nil {
@@ -92,8 +88,15 @@ func SendCrawlingWebhook(url string, payload any) {
 	}
 	buff := bytes.NewBuffer(payloadJson)
 
-	_, err = http.Post(url, "application/json", buff)
+	resp, err := http.Post(url, "application/json", buff)
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
+	PostLogger.Println(string(body))
 }

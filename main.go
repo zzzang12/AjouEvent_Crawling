@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"strconv"
 	"time"
 
@@ -20,10 +21,12 @@ func main() {
 	defer sentNoticeLogFile.Close()
 	SentNoticeLogger = CreateLogger(sentNoticeLogFile)
 
+	postLogFile := OpenLogFile("logs/postLog.txt")
+	defer postLogFile.Close()
+	PostLogger = CreateLogger(postLogFile)
+
 	Client = ConnectFirebase()
 	defer Client.Close()
-
-	env := LoadEnv()
 
 	notifierConfigs := LoadNotifierConfig("config/notifierConfigs.json")
 
@@ -45,7 +48,7 @@ func main() {
 		notifiers = append(notifiers, notifier)
 	}
 
-	crawlingPeriod, err := strconv.Atoi(env["CRAWLING_PERIOD"])
+	crawlingPeriod, err := strconv.Atoi(os.Getenv("CRAWLING_PERIOD"))
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}
