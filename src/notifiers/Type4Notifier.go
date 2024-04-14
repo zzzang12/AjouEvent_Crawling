@@ -74,7 +74,7 @@ func (notifier *Type4Notifier) scrapeNotice() []Notice {
 	}
 
 	for _, notice := range notices {
-		SentNoticeLogger.Println("notice =>", notice)
+		SentNoticeLogger.Println(notice)
 	}
 
 	return notices
