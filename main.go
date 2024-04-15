@@ -32,18 +32,19 @@ func main() {
 
 	notifiers := make([]Notifier, 0, len(notifierConfigs))
 	for _, notifierConfig := range notifierConfigs {
+		baseNotifier := BaseNotifier{}.New(notifierConfig)
 		var notifier Notifier
 		switch notifierConfig.Type {
 		case 1:
-			notifier = Type1Notifier{}.New(notifierConfig)
+			notifier = Type1Notifier{}.New(baseNotifier)
 		case 2:
-			notifier = Type2Notifier{}.New(notifierConfig)
+			notifier = Type2Notifier{}.New(baseNotifier)
 		case 3:
-			notifier = Type3Notifier{}.New(notifierConfig)
+			notifier = Type3Notifier{}.New(baseNotifier)
 		case 4:
-			notifier = Type4Notifier{}.New(notifierConfig)
+			notifier = Type4Notifier{}.New(baseNotifier)
 		case 5:
-			notifier = Type5Notifier{}.New(notifierConfig)
+			notifier = Type5Notifier{}.New(baseNotifier)
 		}
 		notifiers = append(notifiers, notifier)
 	}
