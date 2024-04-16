@@ -1,7 +1,6 @@
 package notifiers
 
 import (
-	"context"
 	"errors"
 	"net/http"
 	"os"
@@ -10,7 +9,6 @@ import (
 
 	. "Notifier/models"
 	. "Notifier/src/utils"
-	"cloud.google.com/go/firestore"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -26,15 +24,15 @@ type BaseNotifier struct {
 }
 
 func (BaseNotifier) New(config NotifierConfig) *BaseNotifier {
-	dbData := LoadDbData(config.EnglishTopic)
+	boxCount, maxNum := LoadDbData(config.EnglishTopic)
 
 	return &BaseNotifier{
 		Type:         config.Type,
 		BaseUrl:      config.BaseUrl,
 		EnglishTopic: config.EnglishTopic,
 		KoreanTopic:  config.KoreanTopic,
-		BoxCount:     int(dbData["box"].(int64)),
-		MaxNum:       int(dbData["num"].(int64)),
+		BoxCount:     boxCount,
+		MaxNum:       maxNum,
 	}
 }
 
@@ -132,23 +130,15 @@ func (notifier *BaseNotifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 		}
 
 		notifier.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(notifier.EnglishTopic).Update(context.Background(), []firestore.Update{
-			{
-				Path:  "box",
-				Value: notifier.BoxCount,
-			},
-		})
+		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.topic = ? AND n.type = ?"
+		_, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
 	} else if boxCount < notifier.BoxCount {
 		notifier.BoxCount = boxCount
-		_, err := Client.Collection("notice").Doc(notifier.EnglishTopic).Update(context.Background(), []firestore.Update{
-			{
-				Path:  "box",
-				Value: notifier.BoxCount,
-			},
-		})
+		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.topic = ? AND n.type = ?"
+		_, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}
@@ -185,12 +175,8 @@ func (notifier *BaseNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 		}
 
 		notifier.MaxNum = maxNum
-		_, err = Client.Collection("notice").Doc(notifier.EnglishTopic).Update(context.Background(), []firestore.Update{
-			{
-				Path:  "num",
-				Value: notifier.MaxNum,
-			},
-		})
+		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.topic = ? AND n.type = ?"
+		_, err = DB.Exec(query, notifier.MaxNum, notifier.EnglishTopic, "num")
 		if err != nil {
 			ErrorLogger.Panic(err)
 		}

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"bytes"
-	"context"
+	"database/sql"
 	"encoding/json"
 	"io"
 	"log"
@@ -10,16 +10,14 @@ import (
 	"os"
 
 	. "Notifier/models"
-	"cloud.google.com/go/firestore"
-	firebase "firebase.google.com/go"
 	"github.com/PuerkitoBio/goquery"
-	"google.golang.org/api/option"
+	"github.com/go-sql-driver/mysql"
 )
 
 var ErrorLogger *log.Logger
 var SentNoticeLogger *log.Logger
 var PostLogger *log.Logger
-var Client *firestore.Client
+var DB *sql.DB
 
 func CreateDir(path string) {
 	_, err := os.Stat(path)
@@ -43,17 +41,27 @@ func CreateLogger(file *os.File) *log.Logger {
 	return log.New(file, "", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-func ConnectFirebase() *firestore.Client {
-	sa := option.WithCredentialsFile("serviceAccountKey.json")
-	app, err := firebase.NewApp(context.Background(), nil, sa)
-	if err != nil {
-		log.Fatal(err)
+func ConnectDB() *sql.DB {
+	config := mysql.Config{
+		User:                 os.Getenv("DB_USER"),
+		Passwd:               os.Getenv("DB_PW"),
+		Net:                  "tcp",
+		Addr:                 os.Getenv("DB_IP") + ":" + os.Getenv("DB_PORT"),
+		DBName:               os.Getenv("DB_NAME"),
+		AllowNativePasswords: true,
 	}
-	client, err := app.Firestore(context.Background())
+	connector, err := mysql.NewConnector(&config)
 	if err != nil {
-		log.Fatal(err)
+		ErrorLogger.Panic(err)
 	}
-	return client
+
+	db := sql.OpenDB(connector)
+	err = db.Ping()
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
+
+	return db
 }
 
 func LoadNotifierConfig(path string) []NotifierConfig {
@@ -73,13 +81,22 @@ func LoadNotifierConfig(path string) []NotifierConfig {
 	return configs
 }
 
-func LoadDbData(documentID string) map[string]interface{} {
-	dsnap, err := Client.Collection("notice").Doc(documentID).Get(context.Background())
+func LoadDbData(topic string) (int, int) {
+	var boxCount int
+	query := "SELECT n.value FROM notice AS n JOIN topic AS t ON n.topic_id = t.id WHERE t.topic = ? AND n.type = ?"
+
+	err := DB.QueryRow(query, topic, "box").Scan(&boxCount)
 	if err != nil {
-		ErrorLogger.Panic(err)
+		log.Fatal(err)
 	}
-	dbData := dsnap.Data()
-	return dbData
+
+	var maxNum int
+	err = DB.QueryRow(query, topic, "num").Scan(&maxNum)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return boxCount, maxNum
 }
 
 func SendCrawlingWebhook(url string, payload any) {

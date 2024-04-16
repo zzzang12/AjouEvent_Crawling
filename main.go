@@ -25,8 +25,7 @@ func main() {
 	defer postLogFile.Close()
 	PostLogger = CreateLogger(postLogFile)
 
-	Client = ConnectFirebase()
-	defer Client.Close()
+	DB = ConnectDB()
 
 	notifierConfigs := LoadNotifierConfig("config/notifierConfigs.json")
 
