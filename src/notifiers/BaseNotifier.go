@@ -69,16 +69,11 @@ func (notifier *BaseNotifier) scrapeNotice() []Notice {
 	}
 
 	boxNotices := notifier.scrapeBoxNotice(doc)
-
 	numNotices := notifier.scrapeNumNotice(doc)
 
 	notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
-	for _, notice := range boxNotices {
-		notices = append(notices, notice)
-	}
-	for _, notice := range numNotices {
-		notices = append(notices, notice)
-	}
+	notices = append(notices, boxNotices...)
+	notices = append(notices, numNotices...)
 
 	return notices
 }
