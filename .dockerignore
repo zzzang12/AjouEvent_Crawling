@@ -4,6 +4,7 @@
 .gitignore
 .idea
 README.md
+logs
 docker
 tmp
 *.iml
