@@ -1,7 +1,6 @@
 .DS_Store
 .idea
 logs
-serviceAccountKey.json
 tmp
 *.iml
 .air.toml

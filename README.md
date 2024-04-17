@@ -23,10 +23,3 @@
 | 3    | 간호대학                                                                                                                                                                                                                                                                                                                                                                                  |
 | 4    | 의과대학                                                                                                                                                                                                                                                                                                                                                                                  |
 | 5    | 사이버보안학과, 융합시스템공학과                                                                                                                                                                                                                                                                                                                                                                     |
-
-### Run
-```shell
-git clone
-
-move serviceAccountKey.json
-```
