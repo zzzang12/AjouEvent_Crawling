@@ -113,7 +113,7 @@ func (notifier *BaseNotifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 
 	if boxCount < notifier.BoxCount {
 		notifier.BoxCount = boxCount
-		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.topic = ? AND n.type = ?"
+		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 		_, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
 		if err != nil {
 			ErrorLogger.Panic(err)
@@ -138,7 +138,7 @@ func (notifier *BaseNotifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 	}
 
 	notifier.BoxCount = boxCount
-	query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.topic = ? AND n.type = ?"
+	query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 	_, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
 	if err != nil {
 		ErrorLogger.Panic(err)
@@ -162,7 +162,7 @@ func (notifier *BaseNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 
 	if maxNum < notifier.MaxNum {
 		notifier.MaxNum = maxNum
-		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.topic = ? AND n.type = ?"
+		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 		_, err = DB.Exec(query, notifier.MaxNum, notifier.EnglishTopic, "num")
 		if err != nil {
 			ErrorLogger.Panic(err)
@@ -188,7 +188,7 @@ func (notifier *BaseNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	}
 
 	notifier.MaxNum = maxNum
-	query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.topic = ? AND n.type = ?"
+	query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 	_, err = DB.Exec(query, notifier.MaxNum, notifier.EnglishTopic, "num")
 	if err != nil {
 		ErrorLogger.Panic(err)

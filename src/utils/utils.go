@@ -83,7 +83,7 @@ func LoadNotifierConfig(path string) []NotifierConfig {
 
 func LoadDbData(topic string) (int, int) {
 	var boxCount int
-	query := "SELECT n.value FROM notice AS n JOIN topic AS t ON n.topic_id = t.id WHERE t.topic = ? AND n.type = ?"
+	query := "SELECT n.value FROM notice AS n JOIN topic AS t ON n.topic_id = t.id WHERE t.department = ? AND n.type = ?"
 
 	err := DB.QueryRow(query, topic, "box").Scan(&boxCount)
 	if err != nil {
