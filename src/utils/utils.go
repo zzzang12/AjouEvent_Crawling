@@ -30,7 +30,7 @@ func CreateDir(path string) {
 }
 
 func OpenLogFile(path string) *os.File {
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0700)
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
