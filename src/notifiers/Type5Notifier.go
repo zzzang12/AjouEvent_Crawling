@@ -50,7 +50,7 @@ func (notifier *Type5Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	department = strings.TrimSpace(department)
 
 	date := time.Now().Format(time.RFC3339)
-	date = date[:len(date)-6]
+	date = date[:19]
 
 	notice := Notice{
 		ID:           id,

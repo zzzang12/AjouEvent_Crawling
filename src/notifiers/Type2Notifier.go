@@ -53,7 +53,7 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	url = notifier.BaseUrl + "&" + strings.Join(split[1:3], "&")
 
 	date := time.Now().Format(time.RFC3339)
-	date = date[:len(date)-6]
+	date = date[:19]
 
 	notice := Notice{
 		ID:           id,
