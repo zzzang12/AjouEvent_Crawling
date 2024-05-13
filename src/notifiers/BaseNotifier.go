@@ -2,6 +2,7 @@ package notifiers
 
 import (
 	"errors"
+	"os"
 	"strconv"
 	"strings"
 
@@ -43,7 +44,7 @@ func (notifier *BaseNotifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		//SendCrawlingWebhook(os.Getenv("WEBHOOK_ENDPOINT"), notice)
+		SendCrawlingWebhook(os.Getenv("WEBHOOK_ENDPOINT"), notice)
 		SentNoticeLogger.Println(notice)
 	}
 }
