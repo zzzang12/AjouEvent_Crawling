@@ -5,6 +5,7 @@ import (
 	"time"
 
 	. "Notifier/models"
+	. "Notifier/src/utils"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -15,6 +16,8 @@ type Type3Notifier struct {
 func (Type3Notifier) New(baseNotifier *BaseNotifier) *Type3Notifier {
 	baseNotifier.BoxNoticeSelector = "#nil"
 	baseNotifier.NumNoticeSelector = "#contents > article > section > div > div:nth-child(3) > div.tb_w > table > tbody > tr"
+	baseNotifier.ContentSelector = "#contents > article > section > div > div > dl > dd.board_view_txt > div.txt p"
+	baseNotifier.ImagesSelector = "#contents > article > section > div > div > dl > dd.board_view_txt > div.txt img"
 
 	return &Type3Notifier{
 		BaseNotifier: *baseNotifier,
@@ -44,7 +47,7 @@ func (notifier *Type3Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	split := strings.FieldsFunc(url, func(c rune) bool {
 		return c == ' '
 	})
-	url = notifier.BaseUrl[:len(notifier.BaseUrl)-7] + "View.do?no=" + split[5]
+	url = notifier.NoticeUrl[:len(notifier.NoticeUrl)-7] + "View.do?no=" + split[5]
 
 	title := sel.Find("td:nth-child(3) > a > span").Text()
 	title = strings.TrimSpace(title)
@@ -52,12 +55,33 @@ func (notifier *Type3Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	date := time.Now().Format(time.RFC3339)
 	date = date[:19]
 
+	doc := NewDocumentFromPage(url)
+
+	contents := make([]string, 0, sel.Length())
+	sel = doc.Find(notifier.ContentSelector)
+	sel.Each(func(_ int, s *goquery.Selection) {
+		if s.Text() != "" && s.Text() != "\u00a0" {
+			str := strings.ReplaceAll(s.Text(), "\u00a0", " ")
+			contents = append(contents, strings.TrimSpace(str))
+		}
+	})
+	content := strings.Join(contents, "\\n")
+
+	images := make([]string, 0, sel.Length())
+	sel = doc.Find(notifier.ImagesSelector)
+	sel.Each(func(_ int, s *goquery.Selection) {
+		image, _ := s.Attr("src")
+		images = append(images, image)
+	})
+
 	notice := Notice{
 		ID:           id,
 		Category:     category,
 		Title:        title,
 		Date:         date,
 		Url:          url,
+		Content:      content,
+		Images:       images,
 		EnglishTopic: notifier.EnglishTopic,
 		KoreanTopic:  notifier.KoreanTopic,
 	}

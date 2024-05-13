@@ -5,6 +5,7 @@ import (
 	"time"
 
 	. "Notifier/models"
+	. "Notifier/src/utils"
 	"github.com/PuerkitoBio/goquery"
 	"golang.org/x/text/encoding/korean"
 	"golang.org/x/text/transform"
@@ -17,6 +18,8 @@ type Type2Notifier struct {
 func (Type2Notifier) New(baseNotifier *BaseNotifier) *Type2Notifier {
 	baseNotifier.BoxNoticeSelector = "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):has(td:first-child > img)"
 	baseNotifier.NumNoticeSelector = "#sub_contents > div > div.conbody > table:nth-child(2) > tbody > tr:nth-child(n+4):nth-last-child(n+3):nth-of-type(2n):not(:has(td:first-child > img))"
+	baseNotifier.ContentSelector = "#DivContents p"
+	baseNotifier.ImagesSelector = "#DivContents img"
 
 	return &Type2Notifier{
 		BaseNotifier: *baseNotifier,
@@ -50,16 +53,38 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	split := strings.FieldsFunc(url, func(c rune) bool {
 		return c == '&'
 	})
-	url = notifier.BaseUrl + "&" + strings.Join(split[1:3], "&")
+	url = notifier.NoticeUrl + "&" + strings.Join(split[1:3], "&")
 
 	date := time.Now().Format(time.RFC3339)
 	date = date[:19]
+
+	doc := NewDocumentFromPage(url)
+
+	contents := make([]string, 0, sel.Length())
+	sel = doc.Find(notifier.ContentSelector)
+	sel.Each(func(_ int, s *goquery.Selection) {
+		if s.Text() != "" && s.Text() != "\u00a0" {
+			str := strings.ReplaceAll(s.Text(), "\u00a0", " ")
+			str, _, _ = transform.String(korean.EUCKR.NewDecoder(), str)
+			contents = append(contents, strings.TrimSpace(str))
+		}
+	})
+	content := strings.Join(contents, "\\n")
+
+	images := make([]string, 0, sel.Length())
+	sel = doc.Find(notifier.ImagesSelector)
+	sel.Each(func(_ int, s *goquery.Selection) {
+		image, _ := s.Attr("src")
+		images = append(images, image)
+	})
 
 	notice := Notice{
 		ID:           id,
 		Title:        title,
 		Date:         date,
 		Url:          url,
+		Content:      content,
+		Images:       images,
 		EnglishTopic: notifier.EnglishTopic,
 		KoreanTopic:  notifier.KoreanTopic,
 	}

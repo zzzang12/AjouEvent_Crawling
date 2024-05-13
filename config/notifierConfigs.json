@@ -3,312 +3,312 @@
     "type": 1,
     "englishTopic": "AIMobilityEngineering",
     "koreanTopic": "AI모빌리티공학과",
-    "baseUrl": "https://mobility.ajou.ac.kr/mobility/board/notice.do"
+    "noticeUrl": "https://mobility.ajou.ac.kr/mobility/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "AjouNormal",
     "koreanTopic": "아주대학교-일반",
-    "baseUrl": "https://ajou.ac.kr/kr/ajou/notice.do"
+    "noticeUrl": "https://ajou.ac.kr/kr/ajou/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "AjouScholarship",
     "koreanTopic": "아주대학교-장학",
-    "baseUrl": "https://ajou.ac.kr/kr/ajou/notice_scholarship.do"
+    "noticeUrl": "https://ajou.ac.kr/kr/ajou/notice_scholarship.do"
   },
   {
     "type": 1,
     "englishTopic": "AppliedArtificialIntelligence",
     "koreanTopic": "인공지능융합학과",
-    "baseUrl": "https://aai.ajou.ac.kr/aai/dgree/notice.do"
+    "noticeUrl": "https://aai.ajou.ac.kr/aai/dgree/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "AppliedChemistryBiologicalEngineering",
     "koreanTopic": "응용화학생명공학과",
-    "baseUrl": "https://chembio.ajou.ac.kr/chembio/admission/notice.do"
+    "noticeUrl": "https://chembio.ajou.ac.kr/chembio/admission/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Architecture",
     "koreanTopic": "건축학과",
-    "baseUrl": "https://arch.ajou.ac.kr/arch/board/total-notice.do"
+    "noticeUrl": "https://arch.ajou.ac.kr/arch/board/total-notice.do"
   },
   {
     "type": 1,
     "englishTopic": "BiologicalScience",
     "koreanTopic": "생명과학과",
-    "baseUrl": "https://biology.ajou.ac.kr/biolog/admission/notice.do"
+    "noticeUrl": "https://biology.ajou.ac.kr/biolog/admission/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Business",
     "koreanTopic": "경영대학",
-    "baseUrl": "https://biz.ajou.ac.kr/biz/community/notice.do"
+    "noticeUrl": "https://biz.ajou.ac.kr/biz/community/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "BusinessAdministration",
     "koreanTopic": "경영학과",
-    "baseUrl": "https://abiz.ajou.ac.kr/abiz/board/notice.do"
+    "noticeUrl": "https://abiz.ajou.ac.kr/abiz/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "ChemicalEngineering",
     "koreanTopic": "화학공학과",
-    "baseUrl": "https://che.ajou.ac.kr/che/board/notice.do"
+    "noticeUrl": "https://che.ajou.ac.kr/che/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Chemistry",
     "koreanTopic": "화학과",
-    "baseUrl": "https://chem.ajou.ac.kr/chem/board/notice.do"
+    "noticeUrl": "https://chem.ajou.ac.kr/chem/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "CivilSystemsEngineering",
     "koreanTopic": "건설시스템공학과",
-    "baseUrl": "https://ce.ajou.ac.kr/ce/board/notice.do"
+    "noticeUrl": "https://ce.ajou.ac.kr/ce/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "ComputingInformatics",
     "koreanTopic": "소프트웨어융합대학",
-    "baseUrl": "https://sw.ajou.ac.kr/sw/board/notice.do"
+    "noticeUrl": "https://sw.ajou.ac.kr/sw/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "CultureContents",
     "koreanTopic": "문화콘텐츠학과",
-    "baseUrl": "https://culture.ajou.ac.kr/culture/academic/notice.do"
+    "noticeUrl": "https://culture.ajou.ac.kr/culture/academic/notice.do"
   },
   {
     "type": 5,
     "englishTopic": "CyberSecurity",
     "koreanTopic": "사이버보안학과",
-    "baseUrl": "https://security.ajou.ac.kr/security/board/under-notice.do"
+    "noticeUrl": "https://security.ajou.ac.kr/security/board/under-notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Dasan",
     "koreanTopic": "다산학부대학",
-    "baseUrl": "https://uc.ajou.ac.kr/uc/comunity/cnotice.do"
+    "noticeUrl": "https://uc.ajou.ac.kr/uc/comunity/cnotice.do"
   },
   {
     "type": 1,
     "englishTopic": "DigitalMedia",
     "koreanTopic": "디지털미디어학과",
-    "baseUrl": "https://media.ajou.ac.kr/media/board/notice.do"
+    "noticeUrl": "https://media.ajou.ac.kr/media/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "ManagementIntelligence",
     "koreanTopic": "경영인텔리전스학과",
-    "baseUrl": "https://ebiz.ajou.ac.kr/ebiz/board/notice.do"
+    "noticeUrl": "https://ebiz.ajou.ac.kr/ebiz/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Economics",
     "koreanTopic": "경제학과",
-    "baseUrl": "https://econ.ajou.ac.kr/econ/activity/notice.do"
+    "noticeUrl": "https://econ.ajou.ac.kr/econ/activity/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "ElectricalComputerEngineering",
     "koreanTopic": "전자공학과",
-    "baseUrl": "https://ece.ajou.ac.kr/ece/bachelor/notice.do"
+    "noticeUrl": "https://ece.ajou.ac.kr/ece/bachelor/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Engineering",
     "koreanTopic": "공과대학",
-    "baseUrl": "https://eng.ajou.ac.kr/eng/community/notice.do"
+    "noticeUrl": "https://eng.ajou.ac.kr/eng/community/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "EnglishLanguageLiterature",
     "koreanTopic": "영어영문학과",
-    "baseUrl": "https://ell.ajou.ac.kr/english/dgree/notice.do"
+    "noticeUrl": "https://ell.ajou.ac.kr/english/dgree/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "EnvironmentalSafetyEngineering",
     "koreanTopic": "환경안전공학과",
-    "baseUrl": "https://env.ajou.ac.kr/env/board/notice.do"
+    "noticeUrl": "https://env.ajou.ac.kr/env/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "FinancialEngineering",
     "koreanTopic": "금융공학과",
-    "baseUrl": "https://fe.ajou.ac.kr/fe/notice/notice.do"
+    "noticeUrl": "https://fe.ajou.ac.kr/fe/notice/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "FrenchLanguageLiterature",
     "koreanTopic": "불어불문학과",
-    "baseUrl": "https://france.ajou.ac.kr/france/notice/notice.do"
+    "noticeUrl": "https://france.ajou.ac.kr/france/notice/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "GlobalBusiness",
     "koreanTopic": "글로벌경영학과",
-    "baseUrl": "https://gb.ajou.ac.kr/gb/admission/alram.do"
+    "noticeUrl": "https://gb.ajou.ac.kr/gb/admission/alram.do"
   },
   {
     "type": 1,
     "englishTopic": "Graduate",
     "koreanTopic": "대학원",
-    "baseUrl": "https://grad.ajou.ac.kr/gs/community/notice.do"
+    "noticeUrl": "https://grad.ajou.ac.kr/gs/community/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "History",
     "koreanTopic": "사학과",
-    "baseUrl": "https://history.ajou.ac.kr/history/admission/notice.do"
+    "noticeUrl": "https://history.ajou.ac.kr/history/admission/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Humanities",
     "koreanTopic": "인문대학",
-    "baseUrl": "https://human.ajou.ac.kr/human/community/community01.do"
+    "noticeUrl": "https://human.ajou.ac.kr/human/community/community01.do"
   },
   {
     "type": 1,
     "englishTopic": "IndustrialEngineering",
     "koreanTopic": "산업공학과",
-    "baseUrl": "https://ie.ajou.ac.kr/ie/academic/notice.do"
+    "noticeUrl": "https://ie.ajou.ac.kr/ie/academic/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "InformationTechnology",
     "koreanTopic": "정보통신대학",
-    "baseUrl": "https://it.ajou.ac.kr/it/board/notice.do"
+    "noticeUrl": "https://it.ajou.ac.kr/it/board/notice.do"
   },
   {
     "type": 5,
     "englishTopic": "IntegrativeSystemsEngineering",
     "koreanTopic": "융합시스템공학과",
-    "baseUrl": "https://ise.ajou.ac.kr/ise/board/notice.do"
+    "noticeUrl": "https://ise.ajou.ac.kr/ise/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "IntelligenceSemiconductorEngineering",
     "koreanTopic": "지능형반도체공학과",
-    "baseUrl": "https://aisemi.ajou.ac.kr/aisemi/board/notice.do"
+    "noticeUrl": "https://aisemi.ajou.ac.kr/aisemi/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "International",
     "koreanTopic": "국제학부대학",
-    "baseUrl": "https://isa.ajou.ac.kr/isa/support/notice.do"
+    "noticeUrl": "https://isa.ajou.ac.kr/isa/support/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "KoreanLanguageLiterature",
     "koreanTopic": "국어국문학과",
-    "baseUrl": "https://kor.ajou.ac.kr/kor/academic/notice.do"
+    "noticeUrl": "https://kor.ajou.ac.kr/kor/academic/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "MaterialsScienceEngineering",
     "koreanTopic": "첨단신소재공학과",
-    "baseUrl": "https://mse.ajou.ac.kr/mse/board/notice.do"
+    "noticeUrl": "https://mse.ajou.ac.kr/mse/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Mathmatics",
     "koreanTopic": "수학과",
-    "baseUrl": "https://math.ajou.ac.kr/math/alram/notice.do"
+    "noticeUrl": "https://math.ajou.ac.kr/math/alram/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "MechanicalEngineering",
     "koreanTopic": "기계공학과",
-    "baseUrl": "https://me.ajou.ac.kr/me/board/under-notice.do"
+    "noticeUrl": "https://me.ajou.ac.kr/me/board/under-notice.do"
   },
   {
     "type": 4,
     "englishTopic": "Medicine",
     "koreanTopic": "의과대학",
-    "baseUrl": "https://www.ajoumc.or.kr/medicine/board/commBoardUVNoticeList.do"
+    "noticeUrl": "https://www.ajoumc.or.kr/medicine/board/commBoardUVNoticeList.do"
   },
   {
     "type": 1,
     "englishTopic": "MilitaryDigitalConvergence",
     "koreanTopic": "국방디지털융합학과",
-    "baseUrl": "https://mdc.ajou.ac.kr/mdc/administration/notice.do"
+    "noticeUrl": "https://mdc.ajou.ac.kr/mdc/administration/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "NaturalScience",
     "koreanTopic": "자연과학대학",
-    "baseUrl": "https://ns.ajou.ac.kr/ns/board/notice.do"
+    "noticeUrl": "https://ns.ajou.ac.kr/ns/board/notice.do"
   },
   {
     "type": 3,
     "englishTopic": "Nursing",
     "koreanTopic": "간호대학",
-    "baseUrl": "https://www.ajoumc.or.kr/nursing/board/commBoardNRNewsList.do"
+    "noticeUrl": "https://www.ajoumc.or.kr/nursing/board/commBoardNRNewsList.do"
   },
   {
     "type": 1,
     "englishTopic": "Pharmacy",
     "koreanTopic": "약학대학",
-    "baseUrl": "https://pharm.ajou.ac.kr/pharm/board/notice.do"
+    "noticeUrl": "https://pharm.ajou.ac.kr/pharm/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Physics",
     "koreanTopic": "물리학과",
-    "baseUrl": "https://physics.ajou.ac.kr/physics/board/notice.do"
+    "noticeUrl": "https://physics.ajou.ac.kr/physics/board/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "PoliticalScienceDiplomacy",
     "koreanTopic": "정치외교학과",
-    "baseUrl": "https://pol.ajou.ac.kr/pol/activity/notice.do"
+    "noticeUrl": "https://pol.ajou.ac.kr/pol/activity/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "Psychology",
     "koreanTopic": "심리학과",
-    "baseUrl": "https://apsy.ajou.ac.kr/apsy/activity/notice.do"
+    "noticeUrl": "https://apsy.ajou.ac.kr/apsy/activity/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "PublicAdministration",
     "koreanTopic": "행정학과",
-    "baseUrl": "https://pba.ajou.ac.kr/pba/activity/notice.do"
+    "noticeUrl": "https://pba.ajou.ac.kr/pba/activity/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "SocialScience",
     "koreanTopic": "사회과학대학",
-    "baseUrl": "https://coss.ajou.ac.kr/coss/community/community01.do"
+    "noticeUrl": "https://coss.ajou.ac.kr/coss/community/community01.do"
   },
   {
     "type": 1,
     "englishTopic": "Sociology",
     "koreanTopic": "사회학과",
-    "baseUrl": "https://soci.ajou.ac.kr/soci/activity/notice.do"
+    "noticeUrl": "https://soci.ajou.ac.kr/soci/activity/notice.do"
   },
   {
     "type": 2,
     "englishTopic": "Software",
     "koreanTopic": "소프트웨어학과",
-    "baseUrl": "http://software.ajou.ac.kr/bbs/board.php?tbl=notice"
+    "noticeUrl": "http://software.ajou.ac.kr/bbs/board.php?tbl=notice"
   },
   {
     "type": 1,
     "englishTopic": "SportsLeisureStudies",
     "koreanTopic": "스포츠레저학과",
-    "baseUrl": "https://slez.ajou.ac.kr/slez/activity/notice.do"
+    "noticeUrl": "https://slez.ajou.ac.kr/slez/activity/notice.do"
   },
   {
     "type": 1,
     "englishTopic": "TransportationSystemsEngineering",
     "koreanTopic": "교통시스템공학과",
-    "baseUrl": "https://tse.ajou.ac.kr/tse/board/board03.do"
+    "noticeUrl": "https://tse.ajou.ac.kr/tse/board/board03.do"
   }
 ]

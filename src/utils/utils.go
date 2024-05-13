@@ -127,3 +127,21 @@ func GetNumNoticeCountReference(doc *goquery.Document, englishTopic, boxNoticeSe
 	boxCount := boxNoticeSels.Length()
 	return 15 - boxCount
 }
+
+func NewDocumentFromPage(url string) *goquery.Document {
+	resp, err := http.Get(url)
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		ErrorLogger.Panicf("status code error: %s", resp.Status)
+	}
+	defer resp.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		ErrorLogger.Panic(err)
+	}
+
+	return doc
+}

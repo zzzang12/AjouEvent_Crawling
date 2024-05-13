@@ -2,8 +2,6 @@ package notifiers
 
 import (
 	"errors"
-	"net/http"
-	"os"
 	"strconv"
 	"strings"
 
@@ -14,13 +12,15 @@ import (
 
 type BaseNotifier struct {
 	Type              int
-	BaseUrl           string
+	NoticeUrl         string
 	EnglishTopic      string
 	KoreanTopic       string
 	BoxCount          int
 	MaxNum            int
 	BoxNoticeSelector string
 	NumNoticeSelector string
+	ContentSelector   string
+	ImagesSelector    string
 }
 
 func (BaseNotifier) New(config NotifierConfig) *BaseNotifier {
@@ -28,7 +28,7 @@ func (BaseNotifier) New(config NotifierConfig) *BaseNotifier {
 
 	return &BaseNotifier{
 		Type:         config.Type,
-		BaseUrl:      config.BaseUrl,
+		NoticeUrl:    config.NoticeUrl,
 		EnglishTopic: config.EnglishTopic,
 		KoreanTopic:  config.KoreanTopic,
 		BoxCount:     boxCount,
@@ -43,27 +43,15 @@ func (notifier *BaseNotifier) Notify() {
 
 	notices := notifier.scrapeNotice()
 	for _, notice := range notices {
-		SendCrawlingWebhook(os.Getenv("WEBHOOK_ENDPOINT"), notice)
+		//SendCrawlingWebhook(os.Getenv("WEBHOOK_ENDPOINT"), notice)
 		SentNoticeLogger.Println(notice)
 	}
 }
 
 func (notifier *BaseNotifier) scrapeNotice() []Notice {
-	resp, err := http.Get(notifier.BaseUrl)
-	if err != nil {
-		ErrorLogger.Panic(err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		ErrorLogger.Panicf("status code error: %s", resp.Status)
-	}
-	defer resp.Body.Close()
+	doc := NewDocumentFromPage(notifier.NoticeUrl)
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		ErrorLogger.Panic(err)
-	}
-
-	err = notifier.checkHTML(doc)
+	err := notifier.checkHTML(doc)
 	if err != nil {
 		ErrorLogger.Panic(err)
 	}

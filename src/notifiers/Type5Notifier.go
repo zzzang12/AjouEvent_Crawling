@@ -5,6 +5,7 @@ import (
 	"time"
 
 	. "Notifier/models"
+	. "Notifier/src/utils"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -15,6 +16,8 @@ type Type5Notifier struct {
 func (Type5Notifier) New(baseNotifier *BaseNotifier) *Type5Notifier {
 	baseNotifier.BoxNoticeSelector = "#cms-content > div > div > div.type01 > table > tbody > tr[class$=\"b-top-box\"]"
 	baseNotifier.NumNoticeSelector = "#cms-content > div > div > div.type01 > table > tbody > tr:not([class$=\"b-top-box\"])"
+	baseNotifier.ContentSelector = "#cms-content > div > div > div.bn-view-common01.type01 > div.b-main-box > div.b-content-box > div.fr-view p"
+	baseNotifier.ImagesSelector = "#cms-content > div > div > div.bn-view-common01.type01 > div.b-main-box > div.b-content-box > div.fr-view img"
 
 	return &Type5Notifier{
 		BaseNotifier: *baseNotifier,
@@ -44,7 +47,7 @@ func (notifier *Type5Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	split := strings.FieldsFunc(url, func(c rune) bool {
 		return c == '&'
 	})
-	url = notifier.BaseUrl + strings.Join(split[0:2], "&")
+	url = notifier.NoticeUrl + strings.Join(split[0:2], "&")
 
 	department := sel.Find("td:nth-child(4)").Text()
 	department = strings.TrimSpace(department)
@@ -52,12 +55,33 @@ func (notifier *Type5Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	date := time.Now().Format(time.RFC3339)
 	date = date[:19]
 
+	doc := NewDocumentFromPage(url)
+
+	contents := make([]string, 0, sel.Length())
+	sel = doc.Find(notifier.ContentSelector)
+	sel.Each(func(_ int, s *goquery.Selection) {
+		if s.Text() != "" && s.Text() != "\u00a0" {
+			str := strings.ReplaceAll(s.Text(), "\u00a0", " ")
+			contents = append(contents, strings.TrimSpace(str))
+		}
+	})
+	content := strings.Join(contents, "\\n")
+
+	images := make([]string, 0, sel.Length())
+	sel = doc.Find(notifier.ImagesSelector)
+	sel.Each(func(_ int, s *goquery.Selection) {
+		image, _ := s.Attr("src")
+		images = append(images, "https://www.ajou.ac.kr"+image)
+	})
+
 	notice := Notice{
 		ID:           id,
 		Title:        title,
 		Department:   department,
 		Date:         date,
 		Url:          url,
+		Content:      content,
+		Images:       images,
 		EnglishTopic: notifier.EnglishTopic,
 		KoreanTopic:  notifier.KoreanTopic,
 	}
