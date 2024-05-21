@@ -74,8 +74,10 @@ func (notifier *Type1Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	images := make([]string, 0, sel.Length())
 	sel = doc.Find(notifier.ImagesSelector)
 	sel.Each(func(_ int, s *goquery.Selection) {
-		image, _ := s.Attr("data-path")
-		images = append(images, "https://www.ajou.ac.kr"+image)
+		image, exsits := s.Attr("data-path")
+		if exsits {
+			images = append(images, "https://www.ajou.ac.kr"+image)
+		}
 	})
 
 	notice := Notice{
