@@ -75,6 +75,9 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	sel = doc.Find(notifier.ImagesSelector)
 	sel.Each(func(_ int, s *goquery.Selection) {
 		image, _ := s.Attr("src")
+		if !strings.Contains(image, "https://www.ajou.ac.kr") {
+			image = "http://software.ajou.ac.kr" + image
+		}
 		images = append(images, image)
 	})
 
