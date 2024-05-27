@@ -4,7 +4,7 @@ services:
     container_name: crawling
     environment:
       CRAWLING_PERIOD: 60
-      DB_IP: 13.209.227.116
+      DB_IP: 3.39.190.255
       DB_NAME: ajouevent
       DB_PORT: 3306
       DB_PW: ajouevent
