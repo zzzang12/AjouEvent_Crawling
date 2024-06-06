@@ -52,6 +52,9 @@ func (notifier *Type4Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	title := sel.Find("td:nth-child(3) > a > span").Text()
 	title = strings.TrimSpace(title)
 
+	department := sel.Find("td:nth-child(5)").Text()
+	department = strings.TrimSpace(department)
+
 	date := time.Now().Format(time.RFC3339)
 	date = date[:19]
 
@@ -73,6 +76,15 @@ func (notifier *Type4Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	sel = doc.Find(notifier.ImagesSelector)
 	sel.Each(func(_ int, s *goquery.Selection) {
 		image, _ := s.Attr("src")
+		if strings.Contains(image, "base64,") {
+			return
+		}
+		if strings.Contains(image, "fonts.gstatic.com") {
+			return
+		}
+		if !strings.Contains(image, "http://") && !strings.Contains(image, "https://") {
+			image = "https://www.ajoumc.or.kr" + image
+		}
 		images = append(images, image)
 	})
 
@@ -80,6 +92,7 @@ func (notifier *Type4Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 		ID:           id,
 		Category:     category,
 		Title:        title,
+		Department:   department,
 		Date:         date,
 		Url:          url,
 		Content:      content,

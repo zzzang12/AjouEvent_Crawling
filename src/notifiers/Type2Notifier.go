@@ -55,6 +55,10 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	})
 	url = notifier.NoticeUrl + "&" + strings.Join(split[1:3], "&")
 
+	department := sel.Find("td:nth-child(5)").Text()
+	department, _, _ = transform.String(korean.EUCKR.NewDecoder(), department)
+	department = strings.TrimSpace(department)
+
 	date := time.Now().Format(time.RFC3339)
 	date = date[:19]
 
@@ -66,6 +70,8 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 		if s.Text() != "" && s.Text() != "\u00a0" {
 			str := strings.ReplaceAll(s.Text(), "\u00a0", " ")
 			str, _, _ = transform.String(korean.EUCKR.NewDecoder(), str)
+			str = strings.ReplaceAll(str, "\n\n", "\\n")
+			str = strings.ReplaceAll(str, "\n", "\\n")
 			contents = append(contents, strings.TrimSpace(str))
 		}
 	})
@@ -75,7 +81,13 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	sel = doc.Find(notifier.ImagesSelector)
 	sel.Each(func(_ int, s *goquery.Selection) {
 		image, _ := s.Attr("src")
-		if !strings.Contains(image, "https://www.ajou.ac.kr") {
+		if strings.Contains(image, "base64,") {
+			return
+		}
+		if strings.Contains(image, "fonts.gstatic.com") {
+			return
+		}
+		if !strings.Contains(image, "http://") && !strings.Contains(image, "https://") {
 			image = "http://software.ajou.ac.kr" + image
 		}
 		images = append(images, image)
@@ -84,6 +96,7 @@ func (notifier *Type2Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	notice := Notice{
 		ID:           id,
 		Title:        title,
+		Department:   department,
 		Date:         date,
 		Url:          url,
 		Content:      content,

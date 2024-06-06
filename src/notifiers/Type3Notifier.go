@@ -62,6 +62,8 @@ func (notifier *Type3Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	sel.Each(func(_ int, s *goquery.Selection) {
 		if s.Text() != "" && s.Text() != "\u00a0" {
 			str := strings.ReplaceAll(s.Text(), "\u00a0", " ")
+			str = strings.ReplaceAll(str, "\n\n", "\\n")
+			str = strings.ReplaceAll(str, "\n", "\\n")
 			contents = append(contents, strings.TrimSpace(str))
 		}
 	})
@@ -71,6 +73,15 @@ func (notifier *Type3Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	sel = doc.Find(notifier.ImagesSelector)
 	sel.Each(func(_ int, s *goquery.Selection) {
 		image, _ := s.Attr("src")
+		if strings.Contains(image, "base64,") {
+			return
+		}
+		if strings.Contains(image, "fonts.gstatic.com") {
+			return
+		}
+		if !strings.Contains(image, "http://") && !strings.Contains(image, "https://") {
+			image = "https://www.ajoumc.or.kr" + image
+		}
 		images = append(images, image)
 	})
 

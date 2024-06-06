@@ -16,8 +16,8 @@ type Type1Notifier struct {
 func (Type1Notifier) New(baseNotifier *BaseNotifier) *Type1Notifier {
 	baseNotifier.BoxNoticeSelector = "#cms-content > div > div > div.type01 > table > tbody > tr[class$=\"b-top-box\"]"
 	baseNotifier.NumNoticeSelector = "#cms-content > div > div > div.type01 > table > tbody > tr:not([class$=\"b-top-box\"])"
-	baseNotifier.ContentSelector = "#cms-content > div > div > div.bn-view-common01.type01 > div.b-main-box > div.b-content-box > div.fr-view p"
-	baseNotifier.ImagesSelector = "#cms-content > div > div > div.bn-view-common01.type01 > div.b-main-box > div.b-content-box > div.fr-view img"
+	baseNotifier.ContentSelector = "#cms-content > div > div > div.bn-view-common01.type01 > div.b-main-box > div.b-content-box p"
+	baseNotifier.ImagesSelector = "#cms-content > div > div > div.bn-view-common01.type01 > div.b-main-box > div.b-content-box img"
 
 	return &Type1Notifier{
 		BaseNotifier: *baseNotifier,
@@ -66,6 +66,8 @@ func (notifier *Type1Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	sel.Each(func(_ int, s *goquery.Selection) {
 		if s.Text() != "" && s.Text() != "\u00a0" {
 			str := strings.ReplaceAll(s.Text(), "\u00a0", " ")
+			str = strings.ReplaceAll(str, "\n\n", "\\n")
+			str = strings.ReplaceAll(str, "\n", "\\n")
 			contents = append(contents, strings.TrimSpace(str))
 		}
 	})
@@ -74,10 +76,17 @@ func (notifier *Type1Notifier) getNotice(sel *goquery.Selection, noticeChan chan
 	images := make([]string, 0, sel.Length())
 	sel = doc.Find(notifier.ImagesSelector)
 	sel.Each(func(_ int, s *goquery.Selection) {
-		image, exsits := s.Attr("data-path")
-		if exsits {
-			images = append(images, "https://www.ajou.ac.kr"+image)
+		image, _ := s.Attr("src")
+		if strings.Contains(image, "base64,") {
+			return
 		}
+		if strings.Contains(image, "fonts.gstatic.com") {
+			return
+		}
+		if !strings.Contains(image, "http://") && !strings.Contains(image, "https://") {
+			image = "https://www.ajou.ac.kr" + image
+		}
+		images = append(images, image)
 	})
 
 	notice := Notice{
