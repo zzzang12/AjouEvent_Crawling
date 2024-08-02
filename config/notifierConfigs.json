@@ -310,5 +310,11 @@
     "englishTopic": "TransportationSystemsEngineering",
     "koreanTopic": "교통시스템공학과",
     "noticeUrl": "https://tse.ajou.ac.kr/tse/board/board03.do"
+  },
+  {
+    "type": 1,
+    "englishTopic": "Dormitory",
+    "koreanTopic": "기숙사",
+    "noticeUrl": "https://dorm.ajou.ac.kr/dorm/notice/notice.do"
   }
 ]
