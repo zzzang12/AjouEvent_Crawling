@@ -54,7 +54,7 @@ func (notifier *BaseNotifier) scrapeNotice() []Notice {
 
 	err := notifier.checkHTML(doc)
 	if err != nil {
-		ErrorLogger.Panic(err)
+		ErrorLogger.Panic(err, notifier.EnglishTopic)
 	}
 
 	boxNotices := notifier.scrapeBoxNotice(doc)
@@ -105,7 +105,7 @@ func (notifier *BaseNotifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 		_, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
 		if err != nil {
-			ErrorLogger.Panic(err)
+			ErrorLogger.Panic(err, notifier.EnglishTopic)
 		}
 		return make([]Notice, 0)
 	}
@@ -130,7 +130,7 @@ func (notifier *BaseNotifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 	query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 	_, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
 	if err != nil {
-		ErrorLogger.Panic(err)
+		ErrorLogger.Panic(err, notifier.EnglishTopic)
 	}
 
 	return boxNotices
@@ -142,7 +142,7 @@ func (notifier *BaseNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	maxNumText = strings.TrimSpace(maxNumText)
 	maxNum, err := strconv.Atoi(maxNumText)
 	if err != nil {
-		ErrorLogger.Panic(err)
+		ErrorLogger.Panic(err, notifier.EnglishTopic)
 	}
 
 	if maxNum == notifier.MaxNum {
@@ -154,7 +154,7 @@ func (notifier *BaseNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 		_, err = DB.Exec(query, notifier.MaxNum, notifier.EnglishTopic, "num")
 		if err != nil {
-			ErrorLogger.Panic(err)
+			ErrorLogger.Panic(err, notifier.EnglishTopic)
 		}
 		return make([]Notice, 0)
 	}
@@ -180,7 +180,7 @@ func (notifier *BaseNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 	_, err = DB.Exec(query, notifier.MaxNum, notifier.EnglishTopic, "num")
 	if err != nil {
-		ErrorLogger.Panic(err)
+		ErrorLogger.Panic(err, notifier.EnglishTopic)
 	}
 
 	return numNotices
