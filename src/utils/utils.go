@@ -134,7 +134,7 @@ func NewDocumentFromPage(url string) *goquery.Document {
 		ErrorLogger.Panic(err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		ErrorLogger.Panicf("status code error: %s", resp.Status)
+		ErrorLogger.Panicf("status code error: %s, url: %s", resp.Status, url)
 	}
 	defer resp.Body.Close()
 
