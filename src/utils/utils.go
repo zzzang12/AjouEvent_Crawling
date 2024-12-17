@@ -136,8 +136,8 @@ func SendCrawlingWebhook(url string, payload any) {
     // Content-Type 헤더 설정
     req.Header.Set("Content-Type", "application/json")
 
-	// Authorization 헤더에 Bearer 토큰 설정
-	req.Header.Set("Authorization", token)
+    // Authorization 헤더에 Bearer 토큰 설정
+    req.Header.Set("crawling-token", token)
 
 
     // HTTP 클라이언트로 요청 보내기
@@ -166,13 +166,28 @@ func GetNumNoticeCountReference(doc *goquery.Document, englishTopic, boxNoticeSe
 }
 
 func NewDocumentFromPage(url string) (*goquery.Document, error) {
-    // HTTP GET 요청
-    resp, err := http.Get(url)
+    // HTTP GET 요청을 위한 새로운 요청 생성
+    req, err := http.NewRequest("GET", url, nil)
+    if err != nil {
+        // 요청 생성 에러 발생 시 에러 반환
+        ErrorLogger.Printf("Request creation error: %s", err)
+        return nil, err
+    }
+
+    // User-Agent 헤더 설정
+    req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36")
+
+    // HTTP 클라이언트 생성
+    client := &http.Client{}
+    
+    // 요청 실행
+    resp, err := client.Do(req)
     if err != nil {
         // 네트워크 에러 발생 시 에러 반환
         ErrorLogger.Printf("Network error: %s", err)
         return nil, err
     }
+        
     defer resp.Body.Close()
 
     // 응답 상태 코드 확인
