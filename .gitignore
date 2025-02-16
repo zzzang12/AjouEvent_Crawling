@@ -4,3 +4,5 @@ logs
 tmp
 *.iml
 .air.toml
+docker/*.yaml
+docker/*.yml

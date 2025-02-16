@@ -20,5 +20,12 @@ FROM alpine:3.19.0 as prod
 WORKDIR /workspace
 COPY --from=build /workspace/crawling .
 COPY config config
+
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone
+
+ENV TZ="Asia/Seoul"
+
 CMD ./crawling
 EXPOSE 1323

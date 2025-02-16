@@ -42,29 +42,38 @@ func (notifier *BaseNotifier) Notify() {
 		recover()
 	}()
 
-	notices := notifier.scrapeNotice()
-	for _, notice := range notices {
-		SendCrawlingWebhook(os.Getenv("WEBHOOK_ENDPOINT"), notice)
-		SentNoticeLogger.Println(notice)
-	}
+    notices := notifier.scrapeNotice()  // 여기서 에러가 발생하면 notices는 nil 또는 빈 슬라이스가 됨
+    if notices == nil {
+        return  // 에러가 발생한 경우 크롤링을 중단하고 빠져나감
+    }
+
+    for _, notice := range notices {
+        SendCrawlingWebhook(os.Getenv("WEBHOOK_ENDPOINT"), notice)
+        SentNoticeLogger.Println(notice)
+    }
 }
 
 func (notifier *BaseNotifier) scrapeNotice() []Notice {
-	doc := NewDocumentFromPage(notifier.NoticeUrl)
+    doc, err := NewDocumentFromPage(notifier.NoticeUrl)  // 에러 반환 받음
+    if err != nil {
+        ErrorLogger.Printf("Failed to load page: %s", err)  // 에러 로깅
+        return nil  // 에러 발생 시 빈 리스트 반환하거나 다른 적절한 처리
+    }
 
-	err := notifier.checkHTML(doc)
-	if err != nil {
-		ErrorLogger.Panic(err, notifier.EnglishTopic)
-	}
+    err = notifier.checkHTML(doc)
+    if err != nil {
+        ErrorLogger.Printf("HTML check failed: %s", err)
+        return nil
+    }
 
-	boxNotices := notifier.scrapeBoxNotice(doc)
-	numNotices := notifier.scrapeNumNotice(doc)
+    boxNotices := notifier.scrapeBoxNotice(doc)
+    numNotices := notifier.scrapeNumNotice(doc)
 
-	notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
-	notices = append(notices, boxNotices...)
-	notices = append(notices, numNotices...)
+    notices := make([]Notice, 0, len(boxNotices)+len(numNotices))
+    notices = append(notices, boxNotices...)
+    notices = append(notices, numNotices...)
 
-	return notices
+    return notices
 }
 
 func (notifier *BaseNotifier) checkHTML(doc *goquery.Document) error {
@@ -100,77 +109,77 @@ func (notifier *BaseNotifier) scrapeBoxNotice(doc *goquery.Document) []Notice {
 		return make([]Notice, 0)
 	}
 
-	if boxCount < notifier.BoxCount {
-		notifier.BoxCount = boxCount
-		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
-		_, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
-		if err != nil {
-			ErrorLogger.Panic(err, notifier.EnglishTopic)
-		}
-		return make([]Notice, 0)
-	}
+        if boxCount < notifier.BoxCount {
+                notifier.BoxCount = boxCount
+                query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
+                _, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
+                if err != nil {
+                        ErrorLogger.Panic(err)
+                }
+                return make([]Notice, 0)
+        }
 
-	boxNoticeChan := make(chan Notice, boxCount)
-	boxNotices := make([]Notice, 0, boxCount)
-	boxNoticeCount := boxCount - notifier.BoxCount
+        boxNoticeChan := make(chan Notice, boxCount)
+        boxNotices := make([]Notice, 0, boxCount)
+        boxNoticeCount := boxCount - notifier.BoxCount
 
-	boxNoticeSels = boxNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
-		return i < boxNoticeCount
-	})
+        boxNoticeSels = boxNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
+                return i < boxNoticeCount
+        })
 
-	boxNoticeSels.Each(func(_ int, boxNotice *goquery.Selection) {
-		go notifier.getNotice(boxNotice, boxNoticeChan)
-	})
+        boxNoticeSels.Each(func(_ int, boxNotice *goquery.Selection) {
+                go notifier.getNotice(boxNotice, boxNoticeChan)
+        })
 
-	for i := 0; i < boxNoticeCount; i++ {
-		boxNotices = append(boxNotices, <-boxNoticeChan)
-	}
+        for i := 0; i < boxNoticeCount; i++ {
+                boxNotices = append(boxNotices, <-boxNoticeChan)
+        }
 
-	notifier.BoxCount = boxCount
-	query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
-	_, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
-	if err != nil {
-		ErrorLogger.Panic(err, notifier.EnglishTopic)
-	}
+        notifier.BoxCount = boxCount
+        query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
+        _, err := DB.Exec(query, notifier.BoxCount, notifier.EnglishTopic, "box")
+        if err != nil {
+                ErrorLogger.Panic(err)
+        }
 
-	return boxNotices
+        return boxNotices
 }
 
 func (notifier *BaseNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
-	numNoticeSels := doc.Find(notifier.NumNoticeSelector)
-	maxNumText := numNoticeSels.First().Find("td:first-child").Text()
-	maxNumText = strings.TrimSpace(maxNumText)
-	maxNum, err := strconv.Atoi(maxNumText)
-	if err != nil {
-		ErrorLogger.Panic(err, notifier.EnglishTopic)
-	}
+        numNoticeSels := doc.Find(notifier.NumNoticeSelector)
+        maxNumText := numNoticeSels.First().Find("td:first-child").Text()
+        maxNumText = strings.TrimSpace(maxNumText)
+        maxNum, err := strconv.Atoi(maxNumText)
+        if err != nil {
+                ErrorLogger.Panic(err)
+        }
 
-	if maxNum == notifier.MaxNum {
-		return make([]Notice, 0)
-	}
+        if maxNum == notifier.MaxNum {
+                return make([]Notice, 0)
+        }
 
-	if maxNum < notifier.MaxNum {
-		notifier.MaxNum = maxNum
-		query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
-		_, err = DB.Exec(query, notifier.MaxNum, notifier.EnglishTopic, "num")
-		if err != nil {
-			ErrorLogger.Panic(err, notifier.EnglishTopic)
-		}
-		return make([]Notice, 0)
-	}
+        if maxNum < notifier.MaxNum {
+                notifier.MaxNum = maxNum
+                query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
+                _, err = DB.Exec(query, notifier.MaxNum, notifier.EnglishTopic, "num")
+                if err != nil {
+                        ErrorLogger.Panic(err)
+                }
+                return make([]Notice, 0)
+        }
 
-	numNoticeCountReference := GetNumNoticeCountReference(doc, notifier.EnglishTopic, notifier.NumNoticeSelector)
-	numNoticeCount := min(maxNum-notifier.MaxNum, numNoticeCountReference)
-	numNoticeChan := make(chan Notice, numNoticeCount)
-	numNotices := make([]Notice, 0, numNoticeCount)
+        numNoticeCountReference := GetNumNoticeCountReference(doc, notifier.EnglishTopic, notifier.NumNoticeSelector)
+        numNoticeCount := min(maxNum-notifier.MaxNum, numNoticeCountReference)
+        numNoticeChan := make(chan Notice, numNoticeCount)
+        numNotices := make([]Notice, 0, numNoticeCount)
 
-	numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
-		return i < numNoticeCount
-	})
+        numNoticeSels = numNoticeSels.FilterFunction(func(i int, _ *goquery.Selection) bool {
+                return i < numNoticeCount
+        })
 
-	numNoticeSels.Each(func(_ int, numNotice *goquery.Selection) {
-		go notifier.getNotice(numNotice, numNoticeChan)
-	})
+        numNoticeSels.Each(func(_ int, numNotice *goquery.Selection) {
+                go notifier.getNotice(numNotice, numNoticeChan)
+        })
 
 	for i := 0; i < numNoticeCount; i++ {
 		numNotices = append(numNotices, <-numNoticeChan)
@@ -180,7 +189,7 @@ func (notifier *BaseNotifier) scrapeNumNotice(doc *goquery.Document) []Notice {
 	query := "UPDATE notice AS n JOIN topic AS t ON n.topic_id = t.id SET n.value = ? WHERE t.department = ? AND n.type = ?"
 	_, err = DB.Exec(query, notifier.MaxNum, notifier.EnglishTopic, "num")
 	if err != nil {
-		ErrorLogger.Panic(err, notifier.EnglishTopic)
+		ErrorLogger.Panic(err)
 	}
 
 	return numNotices
