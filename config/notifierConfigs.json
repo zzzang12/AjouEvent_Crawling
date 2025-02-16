@@ -316,5 +316,29 @@
     "englishTopic": "Dormitory",
     "koreanTopic": "기숙사",
     "noticeUrl": "https://dorm.ajou.ac.kr/dorm/notice/notice.do"
+  },
+  {
+    "type": 4,
+    "englishTopic": "AppliedChemistry",
+    "koreanTopic": "응용화학과",
+    "noticeUrl": "https://appchem.ajou.ac.kr/appchem/college/notice.do"
+  },
+  {
+    "type": 5,
+    "englishTopic": "EconomicPoliticalAndSocialStudies",
+    "koreanTopic": "경제정치사회융합학부",
+    "noticeUrl": "https://eps.ajou.ac.kr/eps/life/notice.do"
+  },
+  {
+    "type": 1,
+    "englishTopic": "FrontierSciences",
+    "koreanTopic": "프런티어과학학부",
+    "noticeUrl": "https://www.ajou.ac.kr/frontiers/board/notice.do"
+  },
+  {
+    "type": 5,
+    "englishTopic": "LiberalStudies",
+    "koreanTopic": "자유전공학부",
+    "noticeUrl": "https://pre.ajou.ac.kr/pre/community/notice.do"
   }
 ]
