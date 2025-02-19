@@ -11,3 +11,4 @@ def word_count(file_path: str) -> dict:
                 counts[word] = counts.get(word, 0) + 1
 
     return counts
+
